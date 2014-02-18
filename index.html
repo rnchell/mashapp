@@ -59,9 +59,7 @@
           getFriendsList();
 
         } else {
-          FB.api('/me?fields=picture&width=200&height=200,name, email', function(response) {
-            
-            console.log(response);
+          FB.api('/me?fields=picture.type(square),name, email', function(response) {
 
             $.post('/user/add/', 
               { 
@@ -80,7 +78,7 @@
     }
 
     function getFriendsList(){
-      FB.api('/me/friends?fields=name,picture.type(large)', function(result) {
+      FB.api('/me/friends?fields=name,picture.width(200).height(200)', function(result) {
         // picture size: square, small, normal, large
 
         console.log(result);
