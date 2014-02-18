@@ -13,15 +13,19 @@ var proposalViewModel = function(participants, time, location, message, matchmak
   self.time = time;
   self.location = ko.observable(location);
   self.message = ko.observable(message);
+
+  self.addProposal = function(){
+    // add proposedDate to each participants
+  };
 };
 
 var usersViewModel = function(){
   var self = this;
   
-  this.users = ko.observableArray();
-  this.dateHolder = [];
+  self.users = ko.observableArray();
+  self.dateHolder = [];
 
-  this.match = function(user){
+  self.match = function(user){
     if (self.dateHolder.length === 0) {
       self.dateHolder.push(user);
      } else if (self.dateHolder[0] === user){
