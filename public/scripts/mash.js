@@ -28,11 +28,9 @@ var usersViewModel = function(){
      } else if (self.dateHolder[0] === user){
         self.dateHolder.pop();
      } else {
-      self.dateHolder.push(user);
-       console.log('We have a proposed match!');
-       var dateModel = new DateModel(new Date(), "Wed, March 5 at 7pm", "1335 Filbert Street", [], []);
-       var proposalUI = new proposalViewModel(self.dateHolder, new Date(), "test", "message");
-       viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
+        self.dateHolder.push(user);
+        var proposalUI = new proposalViewModel(self.dateHolder, new Date(), "test", "message");
+        viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
      }
   };
 }

@@ -10,7 +10,6 @@
   <script type="text/javascript">
   $(function(){
     var friend_ids = [];
-    var user = undefined;
 
     $(document).on('click', '.photo', function(){
       $(this).toggleClass('selected');
@@ -54,9 +53,7 @@
         var userObj = JSON.parse(data);
 
         if(userObj){
-
-          user = userObj;
-          accountViewModel = new accountViewModel(user);
+          accountViewModel = new accountViewModel(userObj);
           ko.applyBindings(accountViewModel, document.getElementById('account-view'));  
 
           getFriendsList();
