@@ -1,0 +1,62 @@
+<html>
+<head>
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/lib/underscore.js"></script>
+  <script src="lib/knockout.js"></script>
+  <script src="scripts/mash.js"></script>
+  <script src="scripts/fb.js"></script>
+  <script type="text/javascript" src="lib/moment.js"></script>
+  <link rel="stylesheet" type="text/css" href="/styles/style.css">
+  <script type="text/javascript">
+    $(document).on('click', '.photo', function(){
+      $(this).toggleClass('selected');
+    });
+</script>
+</head>
+<body>
+  <div id="fb-root"></div>
+  <div class="container">
+    <header id="account-view" data-bind="visible: isUserLoggedIn, template: { name: 'accountTemplate' }" class="clearfix"></header>
+    <div id="content">
+      <fb:login-button data-size="xlarge" show-faces="true" scope="email" max-rows="1"></fb:login-button>
+      <div data-bind="with: selectedView">
+        <div data-bind="template: { name: templateName, data: data }"></div>
+      </div>
+    </div>
+  </div>
+
+  <script id="accountTemplate" type="text/html">
+    <div id="logo">mash</div>
+    <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}">
+      <div id="alert" class="cta sm-cta" data-bind="visible: user.dates.length > 0, text: user.dates.length"></div>
+    </div>
+    <div id="status">
+      <div id="status-text" class="text-single">Single</div>
+      <div id="status-button"></div>
+    </div>
+  </script>
+
+  <script id="userTemplate" type="text/html">
+    <div id="user-instruction" class="instruction">Click two friends to propose a date</div>
+    <div data-bind="foreach: users">
+      <div class="user-profile photo" data-bind="click: $parent.match, css: status, style: {'background-image': photo}">
+      </div>
+    </div>
+  </script>
+
+  <script id="proposalTemplate" type="text/html">
+    <div id="proposal-instruction" class="instruction">Propose a date between</div>
+    <div id="proposal-photos" class="clearfix" data-bind="foreach: participants">
+      <div class="user-profile photo" data-bind="style: {'background-image': photo}">
+      </div>
+    </div>
+    <form data-bind="submit: addProposal">
+      <textarea id="message-area" data-bind="text: message"></textarea>
+      <input class="lg-input" type="text" placeholder="Location: Joes Crab Shack" />
+      <input class="lg-input" type="text" data-bind="value: time" />
+      <button id="submit-proposal" type="submit">Submit</button>
+    </form>
+  </script>
+</body>
+</html>

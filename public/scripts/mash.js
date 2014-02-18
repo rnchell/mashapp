@@ -25,7 +25,7 @@ var usersViewModel = function(){
   self.users = ko.observableArray();
   self.dateHolder = [];
 
-  self.match = function(user){
+  self.match = function(user, event){
     if (self.dateHolder.length === 0) {
       self.dateHolder.push(user);
      } else if (self.dateHolder[0] === user){
@@ -48,7 +48,6 @@ var viewModel = {
 
 var accountViewModel = function(user){
   var self = this;
-
   self.user = user;
   self.photo = 'url(' + user.photo + ')';
   self.isUserLoggedIn = true;

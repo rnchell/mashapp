@@ -123,7 +123,7 @@ header {
 }
 
 .selected {
-	border-color: #FFFF00;
+	border-color: #ed0000;
 }
 
 button {
@@ -151,10 +151,29 @@ textarea {
 	font-family: 'Ubuntu';
 }
 
+#proposal-photos {
+	width: 420px;
+	margin: 0 auto;
+}
+
 #message-area {
 	width: 500px;
-	margin: 0px auto 20px auto;
+	margin: 0px auto 10px auto;
 	display: block;
+}
+
+input {
+	border: 5px solid #DDD;
+	font-size: 1.2em;
+	border-radius: 5px;
+	font-family: 'Ubuntu';
+	display: block;
+	padding: 10px
+}
+
+.lg-input {
+  width: 500px;
+  margin: 0px auto 10px auto;
 }
 
 .clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}
