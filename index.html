@@ -56,15 +56,13 @@
         if(userObj){
 
           user = userObj;
-          console.log(user);
           accountViewModel = new accountViewModel(user);
           ko.applyBindings(accountViewModel, document.getElementById('account-view'));  
-          //viewModel.selectedView({templateName: "accountTemplate", data: accountViewModel});
 
           getFriendsList();
 
         } else {
-          FB.api('/me?fields=picture.type(small),name, email', function(response) {
+          FB.api('/me?fields=picture&width=200&height=200,name, email', function(response) {
             
             console.log(response);
 
@@ -124,9 +122,8 @@
 </head>
 <body>
   <div id="fb-root"></div>
-  <!-- <div id="profile_pics"></div> -->
 <div class="container">
-    <header id="account-view" data-bind="template: { name: 'accountTemplate'}" class="clearfix"></header>
+    <header id="account-view" data-bind="visible: isUserLoggedIn, template: { name: 'accountTemplate' }" class="clearfix"></header>
     <div id="content">
       <fb:login-button data-size="xlarge" show-faces="true" scope="email" max-rows="1"></fb:login-button>
       <div data-bind="with: selectedView">
