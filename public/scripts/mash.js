@@ -23,13 +23,12 @@ var usersViewModel = function(){
 
   this.match = function(user){
     if (self.dateHolder.length === 0) {
-      console.log("first to be asked");
       self.dateHolder.push(user);
      } else if (self.dateHolder[0] === user){
         self.dateHolder.pop();
      } else {
         self.dateHolder.push(user);
-        var proposalUI = new proposalViewModel(self.dateHolder, new Date(), "test", "message");
+        var proposalUI = new proposalViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), "", "You guys should probably go out.");
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
      }
   };

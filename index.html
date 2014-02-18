@@ -150,12 +150,13 @@
     <div id="proposal-instruction" class="instruction">Propose a date between</div>
     <div data-bind="foreach: participants">
       <div class="user-profile photo" data-bind="style: {'background-image': photo}">
+        <div data-bind="text: name"></div>
       </div>
     </div>
     <form>
       <textarea id="message-area" data-bind="text: message"></textarea>
-      <input type="text" placeholder="Location: JOes Crab Shack" />
-      <input type="text" placeholder="Time: " />
+      <input style="width:300px" type="text" placeholder="Location: JOes Crab Shack" />
+      <input style="width:300px" type="text" data-bind="value: time" />
       <button id="submit-proposal" type="submit">Submit</button>
     </form>
   </script>
