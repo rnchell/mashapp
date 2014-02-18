@@ -53,14 +53,11 @@ app.get('/user/:id', function(req, res){
 
 	client.get(id, function(err,rres){
 		var response = JSON.parse(rres);
-		console.log(response);
 		res.send(JSON.stringify(response));
 	});
 });
 
 app.post('/user/add', function(req,res){
-	
-	console.log('adding new user');
 
 	var newUser = { 
 		user_id: req.body.user_id, 
@@ -79,11 +76,14 @@ app.post('/user/add', function(req,res){
 	}
 });
 
+app.post('/user/dates/add', function(req,res){
+	var user = client.mget(req.body.user_id, function(err, rres){
+
+	});
+});
+
 // need a better name
 app.get('/users/', function(req, res){
-	
-	console.log('------- get request to /users/ -------');
-
 	var url_parts = url.parse(req.url, true);
 	var query = url_parts.query;
 
@@ -93,7 +93,6 @@ app.get('/users/', function(req, res){
 			res.send(err);
 		} else {
 			res.send(rres.clean(null));
-			console.log('------- end request to /users/ -------');
 		}
 	});
 });
