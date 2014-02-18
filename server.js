@@ -30,7 +30,7 @@ client.on("connect", function () {
 	//client.flushdb();
 
 	// add some test users
-	client.set('1413688', JSON.stringify({user_id: '1413688', name: 'Ben Zulauf', email: 'bzulauf@gmail.com', photo: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn1/t5/27445_1413688_4653_s.jpg'}));
+	client.set('5740502', JSON.stringify({user_id: '5740502', name: 'Buddy Chell', email: 'buddy@gmail.com', photo: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn1/t1/c55.55.690.690/s200x200/602806_10101469445541208_403235931_n.jpg"}));
 	client.set('15000390', JSON.stringify({user_id: '15000390', name: 'Alexa Jurczak', email: 'akjurczak@gmail.com', photo: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-ash1/t5/371831_4003197_1144548954_s.jpg'}));
 	client.set('4003197', JSON.stringify({user_id: '4003197', name: 'Molly Gilbert', email: 'mollygilbert@gmail.com', photo: 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn2/t5/1116901_15000390_2124234670_s.jpg'}));
 });
