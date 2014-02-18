@@ -111,7 +111,6 @@
         });
       });
     }
-
   });
 </script>
 </head>
@@ -129,7 +128,7 @@
   <script id="accountTemplate" type="text/html">
     <div id="logo">mash</div>
     <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}">
-      <div id="alert" class="cta sm-cta">2</div>
+      <div id="alert" class="cta sm-cta" data-bind="visible: user.dates.length > 0, text: user.dates.length"></div>
     </div>
     <div id="status">
       <div id="status-text" class="text-single">Single</div>
@@ -151,7 +150,7 @@
         <div data-bind="text: name"></div>
       </div>
     </div>
-    <form>
+    <form data-bind="submit: addProposal">
       <textarea id="message-area" data-bind="text: message"></textarea>
       <input style="width:300px" type="text" placeholder="Location: JOes Crab Shack" />
       <input style="width:300px" type="text" data-bind="value: time" />
