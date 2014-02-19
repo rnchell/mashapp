@@ -51,11 +51,7 @@ app.get('/user/:id', mongoClient.getById);
 
 app.post('/user/add', mongoClient.addUser);
 
-app.post('/user/dates/add', function(req,res){
-	var user = client.mget(req.body.user_id, function(err, rres){
-
-	});
-});
+app.post('/dates/add', mongoClient.addDate);
 
 app.get('/friends/', mongoClient.getFriends);
 

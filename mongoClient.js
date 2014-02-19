@@ -65,6 +65,21 @@ exports.getFriends = function(req, res){
     });
 }
 
+exports.addDate = function(req, res){
+    console.log('Adding dates to users.');
+
+    var ids = req.body.ids;
+    var date = req.body.date;
+
+    db.collection('users', function(err, collection) {
+        collection.update({ _id : { $in : ids } },{ $addToSet: { dates: date }},{ multi: true }, function(err, result){
+            console.log(result);
+        });
+    });
+
+    res.end();
+};
+
 exports.addUser = function(req, res) {
 
     var user = { 
