@@ -101,10 +101,6 @@ header {
 	width: 420px;
 }
 
-#proposal-instruction {
-	width: 310px;
-}
-
 .user-profile {
 	height: 190px;
 	width: 190px;
@@ -140,15 +136,15 @@ button {
 	padding: 0px 30px;
 	border-radius: 50px;
 	color: #FFF;
-	margin: 0 auto;
+	margin: 20px auto;
 }
 
 textarea {
-	border: 5px solid #DDD;
+  border: none;
 	padding: 10px;
 	font-size: 1.2em;
-	border-radius: 5px;
 	font-family: 'Ubuntu';
+	resize: none;
 }
 
 #proposal-photos {
@@ -157,23 +153,43 @@ textarea {
 }
 
 #message-area {
-	width: 500px;
-	margin: 0px auto 10px auto;
+	width: 480px;
 	display: block;
+	border-bottom: 2px solid #DDD;
 }
 
 input {
-	border: 5px solid #DDD;
+	border: none;
 	font-size: 1.2em;
-	border-radius: 5px;
 	font-family: 'Ubuntu';
 	display: block;
 	padding: 10px
 }
 
+#proposal-container {
+	width: 500px;
+	margin: 0 auto;
+	border: 5px solid #DDD;
+}
+
 .lg-input {
-  width: 500px;
-  margin: 0px auto 10px auto;
+  width: 480px;
+  border-bottom: 2px solid #DDD;
+}
+
+.participants {
+	font-size: 1.5em;
+	margin: 20px 0px;
+	text-align: center;
+}
+
+.title {
+	color: #AAA;
+}
+
+#map-canvas { 
+	height: 260px; 
+	width: 500px;
 }
 
 .clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}

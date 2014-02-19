@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
@@ -6,6 +7,7 @@
   <script src="lib/knockout.js"></script>
   <script src="scripts/mash.js"></script>
   <script src="scripts/fb.js"></script>
+  <script src="scripts/map.js"></script>
   <script type="text/javascript" src="lib/moment.js"></script>
   <link rel="stylesheet" type="text/css" href="/styles/style.css">
   <script type="text/javascript">
@@ -46,17 +48,18 @@
   </script>
 
   <script id="proposalTemplate" type="text/html">
-    <div id="proposal-instruction" class="instruction">Propose a date between</div>
-    <div id="proposal-photos" class="clearfix" data-bind="foreach: participants">
-      <div class="user-profile photo" data-bind="style: {'background-image': photo}">
-      </div>
+    <div class="participants" data-bind="foreach: participants">
+      <span data-bind="text: name" + " "></span>
     </div>
-    <form data-bind="submit: addProposal">
-      <textarea id="message-area" data-bind="text: message"></textarea>
-      <input class="lg-input" type="text" placeholder="Location: Joes Crab Shack" />
-      <input class="lg-input" type="text" data-bind="value: time" />
-      <button id="submit-proposal" type="submit">Submit</button>
-    </form>
+    <div id="proposal-container">
+      <form data-bind="submit: addProposal">
+        <div id="map-canvas"></div>
+        <input class="lg-input" type="text" placeholder="Location: Joes Crab Shack" />
+        <input class="lg-input" type="text" data-bind="value: time" />
+        <textarea id="message-area" data-bind="text: message"></textarea>
+        <button id="submit-proposal" type="submit">Submit</button>
+      </form>
+    </div>
   </script>
 </body>
 </html>
