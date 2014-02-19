@@ -1,11 +1,10 @@
 var express = require("express"),
 	fs = require('fs'),
 	app = express(),
-	port = parseInt(process.env.PORT, 10) || 3000
+	port = parseInt(process.env.PORT, 10) || 3000,
+	mongoClient = require('./mongoClient')
 	//redis = require('redis'),
 	//client = redis.createClient();
-
-var mongoClient = require('./mongoClient');
 
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
@@ -24,8 +23,6 @@ app.configure(function () {
 	app.use(express.urlencoded());
 	app.use(express.static(__dirname + '/public'));
 });
-
-mongoClient.connect();
 
 // client.on("connect", function () {
 // 	console.log("Connected to redis client. run startup scripts");
@@ -62,4 +59,5 @@ app.post('/user/dates/add', function(req,res){
 
 app.get('/friends/', mongoClient.getFriends);
 
+mongoClient.connect();
 app.listen(port);

@@ -5,7 +5,7 @@ var mongo = require('mongodb'),
 var db;
 
 exports.connect = function(){
-    MongoClient.connect("MONGO_URL", function(err, mdb) {
+    MongoClient.connect('MONGODB_URL', function(err, mdb) {
 
       if(!err){
         console.log('connected to mashdev mongodb');
