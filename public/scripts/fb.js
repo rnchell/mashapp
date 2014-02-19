@@ -56,6 +56,7 @@ $(function(){
       userObj = data;
 
       if(userObj._id){
+        
         accountViewModel = new accountViewModel(userObj);
         ko.applyBindings(accountViewModel, document.getElementById('account-view'));  
 
@@ -73,6 +74,10 @@ $(function(){
             },
             function(data){
               user = data;
+              
+              accountViewModel = new accountViewModel(user);
+              ko.applyBindings(accountViewModel, document.getElementById('account-view')); 
+              
               getFriendsList();
             }
           );

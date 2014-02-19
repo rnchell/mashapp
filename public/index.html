@@ -62,9 +62,9 @@
     <div id="proposal-container">
       <form data-bind="submit: addProposal">
         <div id="map-canvas"></div>
-        <input class="lg-input" type="text" placeholder="Location: Joes Crab Shack" />
+        <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: Joes Crab Shack" />
         <input class="lg-input" type="text" data-bind="value: time" />
-        <textarea id="message-area" data-bind="text: message"></textarea>
+        <textarea id="message-area" data-bind="value: message"></textarea>
         <button id="submit-proposal" type="submit">Submit</button>
       </form>
     </div>

@@ -19,7 +19,7 @@ var proposalViewModel = function(participants, time, location, message, matchmak
       { 
         ids: _.map(self.participants, function(u){ return u._id; }),
         date: {
-          message: self.message,
+          message: self.message(),
           acceptedCount: 0,
           state: "Proposed", // make enum?
           location: self.location(),
@@ -61,7 +61,7 @@ var usersViewModel = function(){
           return 0;
         });
 
-        var proposalUI = new proposalViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), "", "You guys should probably go out.");
+        var proposalUI = new proposalViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), null, null, accountViewModel.user, 0, 'Proposed');
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
         loadScript();
      }
