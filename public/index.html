@@ -30,7 +30,6 @@
   <div class="container">
     <header id="account-view" data-bind="visible: isUserLoggedIn, template: { name: 'accountTemplate' }" class="clearfix"></header>
     <div id="content">
-      <fb:login-button data-size="xlarge" show-faces="true" scope="email" max-rows="1"></fb:login-button>
       <div data-bind="with: selectedView">
         <div data-bind="template: { name: templateName, data: data }"></div>
       </div>
