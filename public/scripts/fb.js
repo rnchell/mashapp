@@ -57,8 +57,8 @@ $(function(){
 
       if(userObj._id){
         
-        accountViewModel = new accountViewModel(userObj);
-        ko.applyBindings(accountViewModel, document.getElementById('account-view'));  
+        userViewModel = new userViewModel(userObj);
+        ko.applyBindings(userViewModel, document.getElementById('account-view'));  
 
         getFriendsList();
 
@@ -75,8 +75,8 @@ $(function(){
             function(data){
               user = data;
               
-              accountViewModel = new accountViewModel(user);
-              ko.applyBindings(accountViewModel, document.getElementById('account-view')); 
+              userViewModel = new userViewModel(user);
+              ko.applyBindings(userViewModel, document.getElementById('account-view')); 
               
               getFriendsList();
             }
@@ -111,9 +111,9 @@ $(function(){
             friends.push(u);
           }
 
-          usersViewModel = new usersViewModel();
-          usersViewModel.users = ko.observableArray(friends);
-          viewModel.selectedView({templateName: "userTemplate", data: usersViewModel});
+          friendsViewModel = new friendsViewModel();
+          friendsViewModel.users = ko.observableArray(friends);
+          viewModel.selectedView({templateName: "friendsTemplate", data: friendsViewModel});
         }
       });
     });
