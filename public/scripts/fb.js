@@ -33,12 +33,12 @@ $(function(){
 
 
   function getUser(user_id) {
-    // first check to see if user exists
+
     $.get('/user/' + user_id, function(data){
       
-      var userObj = JSON.parse(data);
+      userObj = data;
 
-      if(userObj){
+      if(userObj._id){
         accountViewModel = new accountViewModel(userObj);
         ko.applyBindings(accountViewModel, document.getElementById('account-view'));  
 
@@ -49,14 +49,16 @@ $(function(){
 
           $.post('/user/add/', 
             { 
-              user_id: response.id, 
+              _id: response.id, 
               name: response.name, 
               email: response.email,
-              photo: response.picture.data.url },
+              photo: response.picture.data.url 
+            },
             function(data){
-              user = JSON.parse(data);
+              user = data;//JSON.parse(data);
               getFriendsList();
-            });
+            }
+          );
 
         });
       }
@@ -70,21 +72,19 @@ $(function(){
       var friend_list = result.data;
       var photo_hash = {};
 
-      console.log(result.data)
-
       _.each(friend_list, function(item){
         photo_hash[item.id] = item.picture.data.url;
       });
 
       var ids = Object.keys(photo_hash);
 
-      $.get('/users/?id=' + ids.join('&id='), function(data){
+      $.get('/friends/?ids=' + ids.join('&ids='), function(data){
         if(data){
           var friends = [];
 
           for(var i=0; i < data.length; i++){
-            var u = JSON.parse(data[i]);
-            u.photo = 'url(' + photo_hash[u.user_id] + ')';
+            var u = data[i];
+            u.photo = 'url(' + photo_hash[u._id] + ')';
             u.status = 'single';
             friends.push(u);
           }
