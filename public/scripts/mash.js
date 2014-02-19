@@ -34,6 +34,7 @@ var usersViewModel = function(){
         self.dateHolder.push(user);
         var proposalUI = new proposalViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), "", "You guys should probably go out.");
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
+        loadScript();
      }
   };
 }
