@@ -46,6 +46,30 @@ header {
 	color: #ed0000;
 }
 
+
+
+#lg-logo {
+	text-align: center;
+	font-size: 4.0em;
+	color: #ed0000;
+	margin-top: 40px;
+}
+
+#slogan {
+	text-align: center;
+	margin-bottom: 80px;
+	font-size: 1.5em;
+}
+
+#fb-button {
+	margin: 0 auto;
+	background-color: #3B5999;
+	border-radius: 25px;
+	color: #FFF;
+	height: 50px;
+	padding: 0px 30px;
+}
+
 #account {
 	float: right;
 	position: relative;
@@ -128,6 +152,7 @@ button {
 	font-family: 'Ubuntu';
 	font-size: 1.5em;
 	display: block;
+	outline: none;
 }
 
 #submit-proposal {
