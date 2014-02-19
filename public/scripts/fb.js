@@ -72,7 +72,7 @@ $(function(){
               photo: response.picture.data.url 
             },
             function(data){
-              user = data;//JSON.parse(data);
+              user = data;
               getFriendsList();
             }
           );
