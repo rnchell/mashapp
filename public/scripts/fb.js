@@ -12,7 +12,6 @@ $(function(){
     function loadFBDialog() {
       FB.login(function(response) {
       if (response.authResponse) {
-        console.log('Welcome!  Fetching your information.... ');
         FB.api('/me', function(response) {
         console.log('Good to see you, ' + response.name + '.');
       });
@@ -28,8 +27,8 @@ $(function(){
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       if (response.status === 'connected') {
-        // should this be here?
-        ko.applyBindings(viewModel, document.getElementById('content'));
+        viewModel.isUserLoggedIn(true);
+        viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
         getUser(response.authResponse.userID);
       } else if (response.status === 'not_authorized') {
         FB.login(function(response) {});
@@ -56,9 +55,8 @@ $(function(){
       userObj = data;
 
       if(userObj._id){
-        
         userViewModel = new userViewModel(userObj);
-        ko.applyBindings(userViewModel, document.getElementById('account-view'));  
+        viewModel.isUserModelCreated(true);  
 
         getFriendsList();
 
@@ -76,7 +74,7 @@ $(function(){
               user = data;
               
               userViewModel = new userViewModel(user);
-              ko.applyBindings(userViewModel, document.getElementById('account-view')); 
+              viewModel.isUserModelCreated(true);
               
               getFriendsList();
             }

@@ -5,13 +5,9 @@ body {
 	color: #1a1a1a;
 }
 
-.container {
+#container {
 	margin: 0 auto;
 	width: 960px;
-}
-
-header {
-	margin-top: 20px;
 }
 
 .cta {
@@ -68,6 +64,10 @@ header {
 	color: #FFF;
 	height: 50px;
 	padding: 0px 30px;
+}
+
+#account-view{
+	margin-top: 20px;
 }
 
 #account {

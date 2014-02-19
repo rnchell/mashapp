@@ -21,7 +21,23 @@
 </head>
 <body>
   <div id="fb-root"></div>
-  <div id="login-view">
+  <div id="container">
+    <div data-bind="ifnot: isUserLoggedIn">
+      <div data-bind="template: { name: 'loginTemplate' }"></div>
+    </div>
+    <div data-bind="if: isUserLoggedIn">
+      <div data-bind="if: isUserModelCreated">
+        <div data-bind="with: userViewModel">
+          <div id="account-view" data-bind="template: { name: 'accountTemplate' }" class="clearfix"></div>
+        </div>
+      </div>
+      <div data-bind="with: selectedView">
+        <div data-bind="template: { name: templateName, data: data }"></div>
+      </div>
+    </div>
+  </div>
+
+  <script id="loginTemplate" type="text/html">
     <div id="lg-logo">
       mash
     </div>
@@ -29,15 +45,7 @@
     <button id="fb-button">
       Login with Facebook
     </button>
-  </div>
-  <div class="container">
-    <header id="account-view" data-bind="visible: isUserLoggedIn, template: { name: 'accountTemplate' }" class="clearfix"></header>
-    <div id="content">
-      <div data-bind="with: selectedView">
-        <div data-bind="template: { name: templateName, data: data }"></div>
-      </div>
-    </div>
-  </div>
+  </script>
 
   <script id="accountTemplate" type="text/html">
     <div id="logo">mash</div>
