@@ -5,16 +5,19 @@
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="/lib/underscore.js"></script>
   <script src="lib/knockout.js"></script>
-  <script src="scripts/mash.js"></script>
   <script src="scripts/fb.js"></script>
   <script src="scripts/map.js"></script>
+  <script src="viewModels/dateViewModel.js"></script>
+  <script src="viewModels/friendsViewModel.js"></script>
+  <script src="viewModels/userViewModel.js"></script>
+  <script src="viewModels/parentViewModel.js"></script>
   <script type="text/javascript" src="lib/moment.js"></script>
   <link rel="stylesheet" type="text/css" href="/styles/style.css">
   <script type="text/javascript">
     $(document).on('click', '.photo', function(){
       $(this).toggleClass('selected');
     });
-</script>
+  </script>
 </head>
 <body>
   <div id="fb-root"></div>
@@ -47,7 +50,7 @@
     </div>
   </script>
 
-  <script id="userTemplate" type="text/html">
+  <script id="friendsTemplate" type="text/html">
     <div id="user-instruction" class="instruction">Click two friends to propose a date</div>
     <div data-bind="foreach: users">
       <div class="user-profile photo" data-bind="click: $parent.match, css: status, style: {'background-image': photo}">
