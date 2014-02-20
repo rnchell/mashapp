@@ -48,13 +48,13 @@
   </script>
 
   <script id="accountTemplate" type="text/html">
-    <div id="logo">mash</div>
+    <div id="logo" data-bind="click: $root.goToHomeView">mash</div>
     <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}">
       <div id="alert" class="cta sm-cta" data-bind="visible: user.dates.length > 0, text: user.dates.length"></div>
     </div>
-    <div id="status">
-      <div id="status-text" class="text-single">Single</div>
-      <div id="status-button"></div>
+    <div id="status" data-bind="css: status">
+      <div id="status-text" data-bind="text: status, css: status"></div>
+      <div id="status-button" data-bind="click: toggleStatus, css: status"></div>
     </div>
   </script>
 

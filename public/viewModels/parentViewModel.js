@@ -3,15 +3,17 @@ function View(templateName, data) {
   this.data = data;
 };
 
-var viewModel = {
-  views: ko.observableArray([
-    new View("friendsTemplate", new friendsViewModel()),
-    new View("proposalTemplate", dateViewModel)
-  ]),
-  isUserLoggedIn: ko.observable(false),
-  isUserModelCreated: ko.observable(false),
-  selectedView: ko.observable()
+function ViewModel() {
+  var self = this;
+  self.isUserLoggedIn = ko.observable(false);
+  self.isUserModelCreated = ko.observable(false);
+  self.selectedView = ko.observable();
+  self.goToHomeView = function () {
+    self.selectedView({templateName: "friendsTemplate", data: friendsViewModel}); 
+  };
 };
+
+var viewModel = new ViewModel();
 
 $(function() {
   ko.applyBindings(viewModel, document.getElementById('container'));
