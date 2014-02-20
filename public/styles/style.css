@@ -40,9 +40,8 @@ body {
 	line-height: 50px;
 	float: left;
 	color: #ed0000;
+	cursor: pointer;
 }
-
-
 
 #lg-logo {
 	text-align: center;
@@ -81,12 +80,19 @@ body {
 	width: 90px;
 	border-radius: 25px;
 	line-height: 50px;
-	background-color: #2dc200;
 	position: relative;
 	margin-right: 10px;
 	color: #FFF;
 	padding: 0px 20px;
 	font-size: 1.2em;
+}
+
+#status.available {
+	background-color: #2dc200;
+}
+
+#status.taken {
+  background-color: #f2de00;
 }
 
 #status-button {
@@ -95,12 +101,23 @@ body {
 	width: 40px;
 	position: absolute;
 	top: 5px;
-	left: 5px;
 	border-radius: 20px;
 }
 
-.text-single {
+#status-button.available {
+	left: 5px;
+}
+
+#status-button.taken {
+	left: 85px;
+}
+
+#status-text.available {
 	text-align: right;
+}
+
+#status-text.taken {
+	text-align: left;
 }
 
 #alert {
@@ -134,15 +151,15 @@ body {
 	border: 5px solid #DDD;
 }
 
-.single {
+.user-profile.available {
 	border-color: #2dc200;
 }
 
-.taken {
+.user-profile.taken {
 	border-color: #f2de00;
 }
 
-.selected {
+.user-profile.selected {
 	border-color: #ed0000;
 }
 

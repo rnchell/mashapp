@@ -105,7 +105,7 @@ $(function(){
           for(var i=0; i < data.length; i++){
             var u = data[i];
             u.photo = 'url(' + photo_hash[u._id] + ')';
-            u.status = 'single';
+            u.status = 'available';
             friends.push(u);
           }
 
