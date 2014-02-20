@@ -49,6 +49,8 @@ app.get('/', function (req, res) {
 
 app.get('/user/:id', mongoClient.getById);
 
+app.get('/dates', mongoClient.getDates);
+
 app.post('/user/add', mongoClient.addUser);
 
 app.post('/user/update/:id', mongoClient.updateUser);
