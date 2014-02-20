@@ -50,7 +50,7 @@
   <script id="accountTemplate" type="text/html">
     <div id="logo" data-bind="click: $root.goToHomeView">mash</div>
     <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}, click: $root.goToDatesView">
-      <div id="alert" class="cta sm-cta" data-bind="visible: user.dates.length > 0, text: user.dates.length"></div>
+      <div id="alert" class="cta sm-cta" data-bind="visible: dates().length > 0, text: dates().length"></div>
     </div>
     <div id="status" data-bind="css: status">
       <div id="status-text" data-bind="text: status, css: status"></div>

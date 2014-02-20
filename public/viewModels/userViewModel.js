@@ -1,3 +1,12 @@
+var UserObject = function (id, dates, name, email, photo, status) {
+  this.id = id;
+  this.dates = dates;
+  this.name = name;
+  this.email = email;
+  this.photo = photo;
+  this.status = status;
+}
+
 var UserViewModel = function(user){
   var self = this;
   self.user = user;
@@ -14,9 +23,8 @@ var UserViewModel = function(user){
   	self.save();
   };
   self.save = function () {
-  	var userJSON = ko.toJSON(self.user);
-  	console.log(userJSON);
-    $.post('/user/update/' + self.user._id, userJSON, function(data){
+  	var userObject = new UserObject(self.user._id, self.dates(), self.user.name, self.user.email, self.user.photo, self.status());
+    $.post('/user/update/' + self.user._id, userObject, function(data){
       console.log(data)
   	});
   };
