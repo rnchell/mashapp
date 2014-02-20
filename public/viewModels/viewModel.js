@@ -11,6 +11,9 @@ function ViewModel() {
   self.goToHomeView = function () {
     self.selectedView({templateName: "friendsTemplate", data: friendsViewModel}); 
   };
+  self.goToDatesView = function () {
+    self.selectedView({templateName: "datesTemplate", data: userViewModel})
+  }
 };
 
 var viewModel = new ViewModel();

@@ -1,4 +1,4 @@
-var dateViewModel = function(participants, time, location, message, matchmaker, acceptedCount, state){
+var DateViewModel = function(participants, time, location, message, matchmaker, acceptedCount, state){
   var self = this;
 
   self.state = state;

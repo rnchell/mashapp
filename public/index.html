@@ -10,7 +10,7 @@
   <script src="viewModels/dateViewModel.js"></script>
   <script src="viewModels/friendsViewModel.js"></script>
   <script src="viewModels/userViewModel.js"></script>
-  <script src="viewModels/parentViewModel.js"></script>
+  <script src="viewModels/viewModel.js"></script>
   <script type="text/javascript" src="lib/moment.js"></script>
   <link rel="stylesheet" type="text/css" href="/styles/style.css">
   <script type="text/javascript">
@@ -49,7 +49,7 @@
 
   <script id="accountTemplate" type="text/html">
     <div id="logo" data-bind="click: $root.goToHomeView">mash</div>
-    <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}">
+    <div id="account" class="cta lg-cta photo" data-bind="style: {'background-image': photo}, click: $root.goToDatesView">
       <div id="alert" class="cta sm-cta" data-bind="visible: user.dates.length > 0, text: user.dates.length"></div>
     </div>
     <div id="status" data-bind="css: status">
@@ -67,7 +67,7 @@
   </script>
 
   <script id="proposalTemplate" type="text/html">
-    <div class="participants" data-bind="foreach: participants">
+    <div class="section-header" data-bind="foreach: participants">
       <span data-bind="text: name" + " "></span>
     </div>
     <div id="proposal-container">
@@ -78,6 +78,15 @@
         <textarea id="message-area" data-bind="value: message"></textarea>
         <button id="submit-proposal" type="submit">Submit</button>
       </form>
+    </div>
+  </script>
+
+  <script id="datesTemplate" type="text/html">
+    <div class="section-header">Dates</div>
+    <div id="dates" data-bind="foreach: dates">
+      <div class="date">
+        <div date-bind="text: matchmaker"></div>
+      </div>
     </div>
   </script>
 </body>

@@ -55,7 +55,7 @@ $(function(){
       userObj = data;
 
       if(userObj._id){
-        userViewModel = new userViewModel(userObj);
+        userViewModel = new UserViewModel(userObj);
         viewModel.isUserModelCreated(true);  
 
         getFriendsList();
@@ -73,7 +73,7 @@ $(function(){
             function(data){
               user = data;
               
-              userViewModel = new userViewModel(user);
+              userViewModel = new UserViewModel(user);
               viewModel.isUserModelCreated(true);
               
               getFriendsList();
