@@ -51,9 +51,13 @@ app.get('/user/:id', mongoClient.getById);
 
 app.post('/user/add', mongoClient.addUser);
 
+app.post('/user/update/:id', mongoClient.updateUser);
+
 app.post('/dates/add', mongoClient.addDate);
 
 app.get('/friends/', mongoClient.getFriends);
+
+app.delete('/user/delete/:id', mongoClient.deleteUser);
 
 mongoClient.connect();
 app.listen(port);

@@ -219,12 +219,6 @@ input {
   border-bottom: 2px solid #DDD;
 }
 
-.participants {
-	font-size: 1.5em;
-	margin: 20px 0px;
-	text-align: center;
-}
-
 .title {
 	color: #AAA;
 }
@@ -232,6 +226,12 @@ input {
 #map-canvas { 
 	height: 260px; 
 	width: 500px;
+}
+
+.section-header {
+	margin: 20px 0px;
+	text-align: center;
+	font-size: 1.5em;
 }
 
 .clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}
