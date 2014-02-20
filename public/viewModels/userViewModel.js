@@ -2,6 +2,7 @@ var UserViewModel = function(user){
   var self = this;
   self.user = user;
   self.dates = ko.observableArray(user.dates);
+  self.datesHolder = ko.observableArray();
   self.status = ko.observable(user.status.toLowerCase());
   self.photo = 'url(' + user.photo + ')';
   self.isUserLoggedIn = true;
@@ -26,5 +27,10 @@ var UserViewModel = function(user){
 	      console.log("removed " + result)
 	    }
     });
+  };
+  self.getDates = function () {
+		$.get('/dates', {dates: self.dates()}, function (data) {
+      self.datesHolder(data);
+		})
   }
 };
