@@ -1,3 +1,36 @@
+    var createCookie = function(name, value, days) {
+    var expires;
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    }
+    else {
+        expires = "";
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end == -1) {
+                    c_end = document.cookie.length;
+                }
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }    
+
+
+
+    if(getCookie('mash_logged_in')){
+      viewModel.isUserLoggedIn(true);
+    }
 $(function(){
   var friend_ids = [];
 
@@ -12,6 +45,7 @@ $(function(){
     function loadFBDialog() {
       FB.login(function(response) {
       if (response.authResponse) {
+        createCookie('mash_logged_in', 'true', 1);
         FB.api('/me', function(response) {
         console.log('Good to see you, ' + response.name + '.');
       });
@@ -23,7 +57,7 @@ $(function(){
 
     $('#fb-button').click(function () {
       loadFBDialog();
-    })
+    });
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       if (response.status === 'connected') {
@@ -31,9 +65,14 @@ $(function(){
         viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
         getUser(response.authResponse.userID);
       } else if (response.status === 'not_authorized') {
-        FB.login(function(response) {});
+        console.log('NOT AUTHORIZED');
+        FB.login(function(response) {
+
+        });
       } else {
-        FB.login(function(response) {});
+        console.log('LAST ELSE');
+        FB.login(function(response) {
+        });
       }
     });
   };
