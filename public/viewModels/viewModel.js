@@ -8,6 +8,7 @@ function ViewModel() {
   self.isUserLoggedIn = ko.observable(false);
   self.isUserModelCreated = ko.observable(false);
   self.selectedView = ko.observable();
+  
   self.goToHomeView = function () {
     self.selectedView({templateName: "friendsTemplate", data: friendsViewModel}); 
   };
