@@ -16,17 +16,15 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
         date: {
           message: self.message(),
           acceptedCount: 0,
-          state: "Proposed", // make enum?
+          state: "proposed", // make enum?
           location: self.location(),
           time: self.time,
-          // creating slimmed down user objects for participants to prevent nested date arrays
-          // can change this if need be
-          // should we include photo?
-          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, email: u.email } }),
-          matchmaker: self.matchmaker
+          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, photo: u.photo } }),
+          matchmaker: self.matchmaker.name
         } 
       },
       function(data){
+        console.log(data);
       }
     );
   };

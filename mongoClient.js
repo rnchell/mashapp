@@ -65,19 +65,37 @@ exports.getFriends = function(req, res){
     });
 }
 
+exports.getDates = function(req, res){
+    var date_ids = req.body.dates;
+
+    db.collection('dates').find({"_id": {"$in": date_ids}}).toArray(function(err, dates){
+        res.send(dates);
+    });
+}
+
 exports.addDate = function(req, res){
     console.log('Adding dates to users.');
 
     var ids = req.body.ids;
     var date = req.body.date;
 
-    db.collection('users', function(err, collection) {
-        collection.update({ _id : { $in : ids } },{ $addToSet: { dates: date }},{ multi: true }, function(err, result){
-            console.log(result);
+    db.collection('dates', function(err, datesCollection){
+        datesCollection.insert(date, {safe: true}, function(err, result){
+            if(!err){
+                db.collection('users', function(err, userCollection) {
+                    userCollection.update({ _id : { $in : ids } },{ $addToSet: { dates: result[0]._id }},{ multi: true }, function(err, result){
+                        if(err){
+                            console.log('Error adding date to user: ' + err);
+                        } else {
+                            res.end('success');
+                        }
+                    });
+                });
+            }else{
+                console.log('Error adding new date: ' + err);
+            }
         });
     });
-
-    res.end();
 };
 
 exports.addUser = function(req, res) {
