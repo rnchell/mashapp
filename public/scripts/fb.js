@@ -1,4 +1,4 @@
-    var createCookie = function(name, value, days) {
+  var createCookie = function(name, value, days) {
     var expires;
     if (days) {
         var date = new Date();
@@ -9,28 +9,32 @@
         expires = "";
     }
     document.cookie = name + "=" + value + expires + "; path=/";
-}
+  }
 
-    function getCookie(c_name) {
-        if (document.cookie.length > 0) {
-            c_start = document.cookie.indexOf(c_name + "=");
-            if (c_start != -1) {
-                c_start = c_start + c_name.length + 1;
-                c_end = document.cookie.indexOf(";", c_start);
-                if (c_end == -1) {
-                    c_end = document.cookie.length;
-                }
-                return unescape(document.cookie.substring(c_start, c_end));
-            }
-        }
-        return "";
-    }    
+  var deleteCookie = function(name){
+    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  }
 
+  function getCookie(c_name) {
+      if (document.cookie.length > 0) {
+          c_start = document.cookie.indexOf(c_name + "=");
+          if (c_start != -1) {
+              c_start = c_start + c_name.length + 1;
+              c_end = document.cookie.indexOf(";", c_start);
+              if (c_end == -1) {
+                  c_end = document.cookie.length;
+              }
+              return unescape(document.cookie.substring(c_start, c_end));
+          }
+      }
+      return "";
+  }    
 
+  if(getCookie('mash_user')){
+    console.log('cookie exists');
+    viewModel.isUserLoggedIn(true);
+  }
 
-    if(getCookie('mash_logged_in')){
-      viewModel.isUserLoggedIn(true);
-    }
 $(function(){
   var friend_ids = [];
 
@@ -44,19 +48,36 @@ $(function(){
 
     function loadFBDialog() {
       FB.login(function(response) {
-      if (response.authResponse) {
-        createCookie('mash_logged_in', 'true', 1);
-        FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
-      });
-      } else {
-        console.log('User cancelled login or did not fully authorize.');
-      }
-    });
+        if (response.authResponse) {
+          createCookie('mash_user', response.authResponse.accessToken, 1);
+          // FB.api('/me', function(response) {
+          //   console.log('Good to see you, ' + response.name + '.');
+          // });
+        } else {
+          console.log('User cancelled login or did not fully authorize.');
+        }
+      }, {scope: 'email'});
     }
 
     $('#fb-button').click(function () {
       loadFBDialog();
+    });
+
+    FB.getLoginStatus(function(response){
+      if(response.status === 'connected'){
+        createCookie('mash_user', response.authResponse.accessToken, 1);
+        console.log('getLoginStatus: connected');
+      } else if (response.status === 'not_authorized'){
+        console.log('getLoginStatus: not-authorized');
+        console.log('REMOVING COOKIE');
+        deleteCookie('mash_user');
+        viewModel.isUserLoggedIn(false);
+      } else {
+        console.log('getLoginStatus: not logged in');
+        console.log('REMOVING COOKIE');
+        deleteCookie('mash_user');
+        viewModel.isUserLoggedIn(false);
+      }
     });
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
@@ -66,11 +87,13 @@ $(function(){
         getUser(response.authResponse.userID);
       } else if (response.status === 'not_authorized') {
         console.log('NOT AUTHORIZED');
+        deleteCookie('mash_user');
         FB.login(function(response) {
 
         });
       } else {
         console.log('LAST ELSE');
+        deleteCookie('mash_user');
         FB.login(function(response) {
         });
       }
@@ -85,7 +108,6 @@ $(function(){
    js.src = "http://connect.facebook.net/en_US/all.js";
    ref.parentNode.insertBefore(js, ref);
   }(document));
-
 
   function getUser(user_id) {
 

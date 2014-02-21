@@ -1,6 +1,10 @@
 var mongo = require('mongodb'),
     url = require('url'),
-    MongoClient = mongo.MongoClient;
+    MongoClient = mongo.MongoClient,
+    _ = require('./public/lib/underscore'),
+    moment = require('./public/lib/moment'),
+    ObjectID = require('mongodb').ObjectID,
+    mailClient = require('./mailclient')
 
 var db;
 
@@ -18,7 +22,7 @@ exports.connect = function(){
 };
 
 exports.close = function(){
-
+    mailClient.close();
 };
 
 exports.getById = function(req, res) {
@@ -66,10 +70,24 @@ exports.getFriends = function(req, res){
 }
 
 exports.getDates = function(req, res){
-    var date_ids = req.body.dates;
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
 
-    db.collection('dates').find({"_id": {"$in": date_ids}}).toArray(function(err, dates){
-        res.send(dates);
+    var date_ids = [];
+
+    if(!Array.isArray(query.ids)){
+        date_ids.push(new ObjectID(query.ids));
+    } else{
+        date_ids = _.map(query.ids, function(id){
+             return ObjectID(id);
+        });
+    }
+
+    db.collection('dates', function(err, collection){
+
+        collection.find({ _id : { $in : date_ids } }).toArray(function(err, dates){
+            res.send(dates);
+        });
     });
 }
 
@@ -78,9 +96,12 @@ exports.addDate = function(req, res){
 
     var ids = req.body.ids;
     var date = req.body.date;
+    date.created = moment().utc().format();
 
     db.collection('dates', function(err, datesCollection){
+
         datesCollection.insert(date, {safe: true}, function(err, result){
+
             if(!err){
                 db.collection('users', function(err, userCollection) {
                     userCollection.update({ _id : { $in : ids } },{ $addToSet: { dates: result[0]._id }},{ multi: true }, function(err, result){
@@ -106,7 +127,7 @@ exports.addUser = function(req, res) {
         email: req.body.email,
         photo: req.body.photo,
         dates: [],
-        status: 'Available'
+        status: 'available'
     };
 
     console.log('Adding user: ' + JSON.stringify(user));
@@ -117,12 +138,10 @@ exports.addUser = function(req, res) {
 
             if (err) {
                 res.send({'error':'An error has occurred'});
-
             } else {
                 console.log('Success: ' + JSON.stringify(result[0]));
-
+                mailClient.sendNewUserEmail(user);
                 res.send(result[0]);
-
             }
         });
     });
@@ -183,4 +202,3 @@ exports.deleteUser = function(req, res) {
 };
 
 exports.MongoClient = MongoClient;
-exports.db = db;

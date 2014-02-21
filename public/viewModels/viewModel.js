@@ -13,7 +13,9 @@ function ViewModel() {
     self.selectedView({templateName: "friendsTemplate", data: friendsViewModel}); 
   };
   self.goToDatesView = function () {
-    self.selectedView({templateName: "datesTemplate", data: userViewModel})
+    userViewModel.getDates(function() {
+      self.selectedView({templateName: "datesTemplate", data: userViewModel});
+    });
   }
 };
 

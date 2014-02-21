@@ -28,9 +28,16 @@ var UserViewModel = function(user){
 	    }
     });
   };
-  self.getDates = function () {
-		$.get('/dates', {dates: self.dates()}, function (data) {
+  self.getDates = function (callback) {
+		$.get('/dates/?ids=' + self.dates().join('&ids='), function (data) {
       self.datesHolder(data);
-		})
-  }
+      callback();
+		});
+  };
+
+  self.getOtherParticipant = function(date, id) {
+      return ko.utils.arrayFirst(date.participants, function(item) {
+          return item._id != id;
+      });
+  };
 };

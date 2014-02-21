@@ -3,8 +3,6 @@ var express = require("express"),
 	app = express(),
 	port = parseInt(process.env.PORT, 10) || 3000,
 	mongoClient = require('./mongoClient')
-	//redis = require('redis'),
-	//client = redis.createClient();
 
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
