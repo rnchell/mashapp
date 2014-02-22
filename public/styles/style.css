@@ -2,7 +2,7 @@ body {
 	margin: 0px;
 	padding: 0px;
 	font-family: 'Ubuntu';
-	color: #1a1a1a;
+	color: #2a2a2a;
 }
 
 #container {
@@ -44,25 +44,79 @@ body {
 }
 
 #lg-logo {
-	text-align: center;
-	font-size: 4.0em;
+	font-size: 2.5em;
 	color: #ed0000;
-	margin-top: 40px;
+	margin: 20px 0px 60px 0px;
 }
 
 #slogan {
 	text-align: center;
-	margin-bottom: 80px;
-	font-size: 1.5em;
+	font-size: 5.0em;
+	font-weight: 300;
 }
 
 #fb-button {
-	margin: 0 auto;
+	margin: 60px auto 10px auto;
 	background-color: #3B5999;
-	border-radius: 25px;
+	border-radius: 35px;
 	color: #FFF;
-	height: 50px;
+	height: 70px;
 	padding: 0px 30px;
+	text-indent: 45px;
+	background-image: url('../img/facebook.png');
+	background-position: 30px center;
+	background-repeat: no-repeat;
+	border-bottom: 4px solid #293e6b;
+	border-right: 2px solid #293e6b;
+	border-left: 2px solid #293e6b;
+}
+
+#fb-button:active {
+  border: none;
+}
+
+#endorser-container {
+	margin-top: 60px;
+	border-top: 1px solid #DDD;
+	padding-top: 60px;
+}
+
+#endorser-left {
+	width: 450px;
+	float: left;
+	margin-right: 60px;
+}
+
+#endorser-right {
+	width: 450px;
+	float: left;
+}
+
+.endorser-photo img{
+	padding: 2px;
+	border: 2px solid #DDD;
+	border-radius: 45px;
+	float: left;
+}
+
+.endorser-text {
+	float: left;
+	margin-left: 20px;
+	line-height: 150%;
+	max-width: 350px;
+}
+
+.endorser-name {
+	color: #aaa;
+	font-size: .8em;
+} 
+
+
+#disclaimer {
+	text-align: center;
+	color: #aaa;
+	line-height: 150%;
+	font-size: 1.0em;
 }
 
 #account-view{
