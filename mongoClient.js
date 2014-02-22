@@ -43,7 +43,6 @@ exports.getById = function(req, res) {
         });
     });
 
-    res.end();
 };
  
 exports.getByIds = function(req, res){

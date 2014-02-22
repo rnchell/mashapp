@@ -16,6 +16,9 @@ function ViewModel() {
     userViewModel.getDates(function() {
       self.selectedView({templateName: "datesTemplate", data: userViewModel});
     });
+  };
+  self.logout = function () {
+    FB.logout();
   }
 };
 

@@ -168,7 +168,7 @@ $(function(){
 
           for(var i=0; i < data.length; i++){
             var u = data[i];
-            u.photo_large = 'url(' + u.photo_large + ')';
+            u.photo_large = u.photo_large;
             u.status = u.status;
             friends.push(u);
           }

@@ -29,12 +29,6 @@ body {
 	border-radius: 25px;
 }
 
-.photo {
-  background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center;
-}
-
 #logo {
 	font-size: 2.0em;
 	line-height: 50px;
@@ -126,12 +120,16 @@ body {
 #account {
 	float: right;
 	position: relative;
+	height: 50px;
+	width: 50px;
+	border-radius: 50px;
+	overflow: hidden;
 }
 
 #status {
 	float: right;
 	height: 50px;
-	width: 90px;
+	width: 110px;
 	border-radius: 25px;
 	line-height: 50px;
 	position: relative;
@@ -151,19 +149,19 @@ body {
 
 #status-button {
 	background-color: #FFF;
-	height: 40px;
-	width: 40px;
+	height: 44px;
+	width: 44px;
 	position: absolute;
-	top: 5px;
-	border-radius: 20px;
+	top: 3px;
+	border-radius: 22px;
 }
 
 #status-button.available {
-	left: 5px;
+	left: 3px;
 }
 
 #status-button.taken {
-	left: 85px;
+	left: 103px;
 }
 
 #status-text.available {
@@ -178,42 +176,49 @@ body {
   background-color: #ed0000;
   position: absolute;
   top: -5px;
-  right: -5px;
+  right: -65px;
   font-size: .8em;
 }
 
 .instruction {
-	font-size: 1.5em;
+	font-size: 2.5em;
+	font-weight: 300;
+	border-bottom: 1px solid #DDD;
 	text-align: center;
-	background-color: #DDD;
 	height: 50px;
 	line-height: 50px;
-	border-radius: 25px;
-	margin: 20px auto;
+	margin: 60px auto 60px auto;
+	padding-bottom: 10px;
 }
 
-#user-instruction {
-	width: 420px;
-}
-
-.user-profile {
-	height: 190px;
-	width: 190px;
-	border-radius: 100px;
+.user-container {
 	float: left;
 	margin: 0px 10px 10px 0px;
-	border: 5px solid #DDD;
 }
 
-.user-profile.available {
+.user-image-container {
+	height: 180px;
+	width: 180px;
+	overflow: hidden;
+	border-radius: 100px;
+	border: 3px solid #DDD;
+}
+
+.user-name {
+	color: #AAA;
+	text-align: center;
+	margin-top: 5px;
+}
+
+.user-image-container.available {
 	border-color: #2dc200;
 }
 
-.user-profile.taken {
+.user-image-container.taken {
 	border-color: #f2de00;
 }
 
-.user-profile.selected {
+.user-image-container.selected {
 	border-color: #ed0000;
 }
 
@@ -286,6 +291,30 @@ input {
 	margin: 20px 0px;
 	text-align: center;
 	font-size: 1.5em;
+}
+
+#footer {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background-color: #FFF;
+	border-top: 1px solid #DDD;
+	height: 50px;
+	line-height: 50px;
+	font-size: .8em;
+	color: #AAA;
+}
+
+#copyright {
+	float: left;
+	margin-left: 30px;
+}
+
+#logout {
+	float: right;
+	margin-right: 30px;
+	cursor: pointer;
 }
 
 .clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}
