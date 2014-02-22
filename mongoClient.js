@@ -66,7 +66,7 @@ exports.getFriends = function(req, res){
 
     db.collection('users', function(err, collection){
 
-        collection.find({ _id : { $in : query.ids } }).toArray(function(err, items){
+        collection.find({ _id : { $in : query.ids } }).sort({ name: 1 }).toArray(function(err, items){
             res.send(items.clean(null));
         });
     });
