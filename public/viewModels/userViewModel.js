@@ -4,8 +4,11 @@ var UserViewModel = function(user){
   self.dates = ko.observableArray(user.dates);
   self.datesHolder = ko.observableArray();
   self.status = ko.observable(user.status.toLowerCase());
-  self.photo = 'url(' + user.photo + ')';
+  self.photo_small = 'url(' + user.photo_small + ')';
+  self.photo_normal = 'url(' + user.photo_normal + ')';
+  self.photo_large = 'url(' + user.photo_large + ')';
   self.isUserLoggedIn = true;
+  
   self.toggleStatus = function () {
   	if (self.status() === "available") {
       self.status("taken");
@@ -37,7 +40,15 @@ var UserViewModel = function(user){
 
   self.getOtherParticipant = function(date, id) {
       return ko.utils.arrayFirst(date.participants, function(item) {
-          return item._id != id;
+          return item._id !== id;
       });
   };
+
+  self.acceptProposal = function(date){
+    console.log('ACCEPTING PROPOSAL: ' + date._id);
+    $.post('/user/dates', {id: date._id},function(data){
+      self.datesHolder.remove(date);
+      self.dates.remove(date._id);
+    });
+  }
 };

@@ -19,7 +19,8 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
           state: "proposed", // make enum?
           location: self.location(),
           time: self.time,
-          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, photo: u.photo } }),
+          // TODO: decide if we need all photo sizes or just one
+          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, photo_large: u.photo_large } }),
           matchmaker: self.matchmaker.name
         } 
       },

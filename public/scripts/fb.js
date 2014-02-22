@@ -82,6 +82,7 @@ $(function(){
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       if (response.status === 'connected') {
+        console.log('auth.authResponseChange: connected');
         viewModel.isUserLoggedIn(true);
         viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
         getUser(response.authResponse.userID);
@@ -129,7 +130,9 @@ $(function(){
               _id: response.id, 
               name: response.name, 
               email: response.email,
-              photo: response.picture.data.url 
+              photo_small: response.picture.data.url,
+              photo_normal: response.picture.data.url.replace('_q.jpg', '_s.jpg'),
+              photo_large: response.picture.data.url.replace('_q.jpg', '_n.jpg').replace('/t5/', '/t1/p200x200/'),
             },
             function(data){
               user = data;
@@ -147,17 +150,17 @@ $(function(){
   }
 
   function getFriendsList(){
-    FB.api('/me/friends?fields=name,picture.width(200).height(200)', function(result) {
-      // picture size: square, small, normal, large
+    FB.api('/me/friends', function(result) {
 
       var friend_list = result.data;
-      var photo_hash = {};
+      // var photo_hash = {};
 
-      _.each(friend_list, function(item){
-        photo_hash[item.id] = item.picture.data.url;
-      });
+      // _.each(friend_list, function(item){
+      //   photo_hash[item.id] = item.picture.data.url;
+      // });
 
-      var ids = Object.keys(photo_hash);
+      //var ids = Object.keys(photo_hash);
+      var ids = _.map(friend_list, function(f){ return f.id; });
 
       $.get('/friends/?ids=' + ids.join('&ids='), function(data){
         if(data){
@@ -165,7 +168,7 @@ $(function(){
 
           for(var i=0; i < data.length; i++){
             var u = data[i];
-            u.photo = 'url(' + photo_hash[u._id] + ')';
+            u.photo_large = 'url(' + u.photo_large + ')';
             u.status = u.status;
             friends.push(u);
           }

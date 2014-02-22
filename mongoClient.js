@@ -9,6 +9,9 @@ var mongo = require('mongodb'),
 var db;
 
 exports.connect = function(){
+
+    console.log('trying to connect to mongo...');
+    
     MongoClient.connect('mongodb://devuser:powerglove@ds033459.mongolab.com:33459/mashdev', function(err, mdb) {
 
       if(!err){
@@ -39,6 +42,8 @@ exports.getById = function(req, res) {
 
         });
     });
+
+    res.end();
 };
  
 exports.getByIds = function(req, res){
@@ -97,6 +102,7 @@ exports.addDate = function(req, res){
     var ids = req.body.ids;
     var date = req.body.date;
     date.created = moment().utc().format();
+    date.acceptedCount = parseInt(date.acceptedCount);
 
     db.collection('dates', function(err, datesCollection){
 
@@ -119,13 +125,28 @@ exports.addDate = function(req, res){
     });
 };
 
+exports.updateProposedDate = function(req, res){
+
+    db.collection('dates').findAndModify({_id: ObjectID(req.body.id)}, [['_id','asc']], {$inc: { acceptedCount: 1}}, {}, function(err, object) {
+        if (err) {
+            console.warn(err.message);
+            res.end(err.message);
+        } else{
+            console.log(object);
+            res.end(JSON.stringify(object));
+        } 
+    });
+}
+
 exports.addUser = function(req, res) {
 
     var user = { 
         _id: req.body._id, 
         name: req.body.name, 
         email: req.body.email,
-        photo: req.body.photo,
+        photo_small: req.body.photo_small,
+        photo_normal: req.body.photo_normal,
+        photo_large: req.body.photo_large,
         dates: [],
         status: 'available'
     };
@@ -140,7 +161,7 @@ exports.addUser = function(req, res) {
                 res.send({'error':'An error has occurred'});
             } else {
                 console.log('Success: ' + JSON.stringify(result[0]));
-                mailClient.sendNewUserEmail(user);
+                //mailClient.sendNewUserEmail(user);
                 res.send(result[0]);
             }
         });
