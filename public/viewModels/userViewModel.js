@@ -18,9 +18,11 @@ var UserViewModel = function(user){
   	self.saveStatus();
   };
   self.saveStatus = function () {
-    $.post('/user/update/' + self.user._id, {status: self.status()}, function(data){
-      console.log(data)
-  	});
+
+    console.log(self.user.status);
+   //  $.post('/user/update/' + self.user._id, {status: self.status()}, function(data){
+   //    console.log(data)
+  	// });
   };
   self.delete = function () {
   	$.ajax({

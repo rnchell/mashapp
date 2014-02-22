@@ -11,7 +11,7 @@ var db;
 exports.connect = function(){
 
     console.log('trying to connect to mongo...');
-    
+
     MongoClient.connect('mongodb://devuser:powerglove@ds033459.mongolab.com:33459/mashdev', function(err, mdb) {
 
       if(!err){
@@ -67,7 +67,13 @@ exports.getFriends = function(req, res){
     db.collection('users', function(err, collection){
 
         collection.find({ _id : { $in : query.ids } }).sort({ name: 1 }).toArray(function(err, items){
-            res.send(items.clean(null));
+
+            if(err){
+                console.log('Error getting user friends: ' + err);
+            } else {
+                res.send(items.clean(null));
+            }
+
         });
     });
 }
@@ -125,15 +131,82 @@ exports.addDate = function(req, res){
 
 exports.updateProposedDate = function(req, res){
 
-    db.collection('dates').findAndModify({_id: ObjectID(req.body.id)}, [['_id','asc']], {$inc: { acceptedCount: 1}}, {}, function(err, object) {
+    var date_id = req.body.id;
+
+    db.collection('dates').findAndModify({_id: ObjectID(date_id)}, [['_id','asc']], {$inc: { acceptedCount: 1}}, {new: true, safe: true}, function(err, date) {
         if (err) {
             console.warn(err.message);
             res.end(err.message);
         } else{
-            console.log(object);
-            res.end(JSON.stringify(object));
+            console.log(date);
+
+            if(date.acceptedCount == 2){
+                // date was accepted by both participants
+                // maybe log somewhere?
+
+                // send email to everyone
+                mailClient.sendDateAcceptedEmail(date);
+
+                //TODO: remove date from database
+                //TODO: remove date from users and update them
+            }
+
+            res.end(JSON.stringify(date));
         } 
     });
+}
+
+exports.deleteDate = function(req, res){
+    res.end('');
+}
+
+exports.rejectProposedDate = function(req, res){
+    var user_id = req.body.id;
+    var date = req.body.date;
+
+    var rejectee = _.find(date.participants, function(u){ return u._id != user_id; });
+    var rejector = _.find(date.participants, function(u){ return u._id == user_id; });
+
+    if(date.acceptedCount == 1){
+        // send rejection email
+        mailClient.sendRejectionEmail(date, rejectee, rejector);
+    }
+
+    db.collection('dates', function(err, collection){
+        collection.remove({_id: date._id}, {safe:true}, function(err, result){
+
+            if (err) {
+                res.send({'error':'An error has occurred - ' + err});
+
+            } else {
+                console.log('' + result + ' date deleted');
+
+                // remove date from both participants
+                db.collection('users', function(err, usersCollection){
+
+                    usersCollection.update({ $in : query.ids }, { $pull: { dates: date._id }}, {safe: true, multi: true}, function(err, result){
+
+                        if (err) {
+                            console.log('Error removing dates from user: ' + err);
+
+                            //res.send({'error':'An error has occurred'});
+
+                        } else {
+                            console.log('' + result + ' document(s) updated');
+
+                            //res.send(user);
+                        }
+
+                    });
+                });
+
+                //res.send(req.body);
+            }
+
+        });
+    });
+
+    //res.end('');
 }
 
 exports.addUser = function(req, res) {
