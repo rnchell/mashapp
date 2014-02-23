@@ -4,9 +4,9 @@ var UserViewModel = function(user){
   self.dates = ko.observableArray(user.dates);
   self.datesHolder = ko.observableArray();
   self.status = ko.observable(user.status.toLowerCase());
-  self.photo_small = 'url(' + user.photo_small + ')';
-  self.photo_normal = 'url(' + user.photo_normal + ')';
-  self.photo_large = 'url(' + user.photo_large + ')';
+  self.photo_small = user.photo_small;
+  self.photo_normal = user.photo_normal;
+  self.photo_large = user.photo_large;
   self.isUserLoggedIn = true;
   
   self.toggleStatus = function () {
