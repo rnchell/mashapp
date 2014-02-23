@@ -12,7 +12,7 @@ var db;
 exports.connect = function(){
 
     console.log('trying to connect to mongo...');
-    console.log(config.DATABASE_URI);
+
     MongoClient.connect(config.DATABASE_URI, function(err, mdb) {
 
       if(!err){
@@ -132,34 +132,55 @@ exports.addDate = function(req, res){
 
 exports.updateProposedDate = function(req, res){
 
-    var date_id = req.body.id;
+    var user_id = req.body.user_id;
+    var date_id = req.body.date_id;
+
+    var modified_date;
 
     db.collection('dates').findAndModify({_id: ObjectID(date_id)}, [['_id','asc']], {$inc: { acceptedCount: 1}}, {new: true, safe: true}, function(err, date) {
         if (err) {
             console.warn(err.message);
             res.end(err.message);
         } else{
-            console.log(date);
 
-            if(date.acceptedCount >= 2){
+            modified_date = date;
+            // remove from user and end response
+            db.collection('users', function(err, usersCollection){
+
+                usersCollection.update({ _id : user_id },{ $pull: { dates: ObjectID(date_id) }}, function(err, result){
+
+                    if (err) {
+                        console.log('Error removing dates from user: ' + err);
+
+                        res.end('Error: ' + err);
+                    } else {
+                        console.log('' + result + ' document(s) updated');
+                        res.end('Success');
+                    }
+
+                });
+            });
+            // can do the rest async without notifying the client
+            if(modified_date.acceptedCount >= 2){
                 // date was accepted by both participants
                 // maybe log somewhere?
 
                 // send email to everyone
-                mailClient.sendDateAcceptedEmail(date);
+                mailClient.sendDateAcceptedEmail(modified_date);
 
                 //TODO: remove date from database
-                db.collection('dates').remove({_id: date._id}, {safe:true}, function(err, result){
+                db.collection('dates').remove({_id: modified_date._id}, {safe:true}, function(err, result){
                     if(err){
                         console.log('Error removing date: ' + err);
                     } else{
                         console.log(result);
+                        res.end(JSON.stringify(result));
                     }
                 });
-                //TODO: remove date from users and update them
-            }
+            } else {
 
-            res.end(JSON.stringify(date));
+                res.end(JSON.stringify(modified_date));
+            }
         } 
     });
 }
