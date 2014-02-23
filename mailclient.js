@@ -45,14 +45,14 @@ exports.sendDateProposalEmail = function(date){
         console.log('Sending email to: ' + date.participants[(i + 1) % date.participants.length]);
         console.log(mailOptions);
         
-        // mailClient.sendMail(mailOptions, function(error, response){
-        //     if(error){
-        //         // log and send techops email
-        //         console.log('Error sending new Date Proposal: ' + error);
-        //     } else{
-        //         console.log('Message sent: ' + response.message);
-        //     }
-        // });
+        mailClient.sendMail(mailOptions, function(error, response){
+            if(error){
+                // log and send techops email
+                console.log('Error sending new Date Proposal: ' + error);
+            } else{
+                console.log('Message sent: ' + response.message);
+            }
+        });
     }
 
 }
@@ -68,34 +68,35 @@ exports.sendRejectionEmail = function(date, rejectee, rejector){
     };
 
     console.log('Sending RejectionEmail: ' + JSON.stringify(mailOptions));
-    // mailClient.sendMail(mailOptions, function(error, response){
-    //     if(error){
-    //         // log and send techops email
-    //         console.log('Error sending rejection email: ' + error);
-    //     } else{
-    //         console.log('Message sent: ' + response.message);
-    //     }
-    // });
+    mailClient.sendMail(mailOptions, function(error, response){
+        if(error){
+            // log and send techops email
+            console.log('Error sending rejection email: ' + error);
+        } else{
+            console.log('Message sent: ' + response.message);
+        }
+    });
 }
 
 exports.sendDateAcceptedEmail = function(date){
+
     var mailOptions = {
         from: fromEmail,
         to: date.participants[0].email + ', ' + date.participants[1].email + ', ' + date.matchmaker.email,
         subject: "The date is on!",
-        text: "",
-        html: ""
+        text: "Location: " + date.location + "\r\n" + "Time: " + date.time,
+        html: "<p><strong>Location:</strong> " + date.location + "<br>Time: " + date.time 
     };
 
     console.log('Sending DateAcceptedEmail: ' + JSON.stringify(mailOptions));
-    // mailClient.sendMail(mailOptions, function(error, response){
-    //     if(error){
-    //         // log and send techops email
-    //         console.log('Error sending date accepted email: ' + error);
-    //     } else{
-    //         console.log('Message sent: ' + response.message);
-    //     }
-    // });
+    mailClient.sendMail(mailOptions, function(error, response){
+        if(error){
+            // log and send techops email
+            console.log('Error sending date accepted email: ' + error);
+        } else{
+            console.log('Message sent: ' + response.message);
+        }
+    });
 }
 
 exports.mailClient = mailClient;
