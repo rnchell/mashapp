@@ -58,7 +58,7 @@ var UserViewModel = function(user){
   self.rejectProposal = function(date){
     console.log('REJECTING PROPOSAL: ' + date._id);
 
-    $.post('/user/dates/reject/', {id: date._id}, function(data){
+    $.post('/user/dates/reject/', {id: self.user._id, date: date}, function(data){
       self.datesHolder.remove(date);
       self.dates.remove(date._id);
     });
