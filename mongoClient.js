@@ -119,6 +119,7 @@ exports.addDate = function(req, res){
                         if(err){
                             console.log('Error adding date to user: ' + err);
                         } else {
+                            mailClient.sendDateProposalEmail(date);
                             res.end('success');
                         }
                     });
