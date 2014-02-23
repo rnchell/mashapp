@@ -8,7 +8,7 @@ var mailClient = nodemailer.createTransport("SMTP",{
     }
 });
 
-var fromEmail = "Mash App <mashapp@gmail.com>";
+var fromEmail = "Tangle <tangle@gmail.com>";
 
 exports.sendNewUserEmail = function(user){
 
@@ -16,8 +16,8 @@ exports.sendNewUserEmail = function(user){
         from: fromEmail,
         to: user.email,
         subject: "Welcome to Mash",
-        text: "Mash: Hook up your friends!",
-        html: "<h2>Mash: Hook up your friends!</h2><p>Welcome, " + user.name + "!</p>"
+        text: "Tangle: Hook up your friends!",
+        html: "<h2>Tangle: Hook up your friends!</h2><p>Welcome, " + user.name + "!</p>"
     };
 
     mailClient.sendMail(mailOptions, function(error, response){
@@ -31,22 +31,29 @@ exports.sendNewUserEmail = function(user){
 
 exports.sendDateProposalEmail = function(date){
 
-    var mailOptions = {
-        from: fromEmail,
-        to: date.participants[0].email + ', ' + date.participants[1].email,
-        subject: "You have a new date proposal!",
-        text: "",
-        html: ""
-    };
+    for(var i=0; i < date.participants.length; i++){
+        
+        var mailOptions = {
+            from: fromEmail,
+            to: date.participants[(i + 1) % date.participants.length].email,
+            subject: "You have a new date proposal!",
+            text: date.matchmaker.name + " has proposed a date between you and " + date.participants[i].name + "!",
+            html: "<h1>" + date.matchmaker.name + " has proposed a date between you and " + date.participants[i].name + " at " + date.location + "</h1><p><strong>Location:</strong> " + date.location + ".</p>"
+        };
 
-    mailClient.sendMail(mailOptions, function(error, response){
-        if(error){
-            // log and send techops email
-            console.log('Error sending new Date Proposal: ' + error);
-        } else{
-            console.log('Message sent: ' + response.message);
-        }
-    });
+        console.log('Sending email to: ' + date.participants[(i + 1) % date.participants.length]);
+        console.log(mailOptions);
+        
+        // mailClient.sendMail(mailOptions, function(error, response){
+        //     if(error){
+        //         // log and send techops email
+        //         console.log('Error sending new Date Proposal: ' + error);
+        //     } else{
+        //         console.log('Message sent: ' + response.message);
+        //     }
+        // });
+    }
+
 }
 
 exports.sendRejectionEmail = function(date, rejectee, rejector){
@@ -55,18 +62,19 @@ exports.sendRejectionEmail = function(date, rejectee, rejector){
         from: fromEmail,
         to: rejectee.email,
         subject: rejector.name + " is a fool.",
-        text: "",
-        html: ""
+        text: 'Tangle\r\n' + rejector.name + ' is a fool.',
+        html: '<h1>Tangle</h1><br><br><p>' + rejector.name + ' is a fool.'
     };
 
-    mailClient.sendMail(mailOptions, function(error, response){
-        if(error){
-            // log and send techops email
-            console.log('Error sending rejection email: ' + error);
-        } else{
-            console.log('Message sent: ' + response.message);
-        }
-    });
+    console.log('Sending RejectionEmail: ' + JSON.stringify(mailOptions));
+    // mailClient.sendMail(mailOptions, function(error, response){
+    //     if(error){
+    //         // log and send techops email
+    //         console.log('Error sending rejection email: ' + error);
+    //     } else{
+    //         console.log('Message sent: ' + response.message);
+    //     }
+    // });
 }
 
 exports.sendDateAcceptedEmail = function(date){
@@ -78,14 +86,15 @@ exports.sendDateAcceptedEmail = function(date){
         html: ""
     };
 
-    mailClient.sendMail(mailOptions, function(error, response){
-        if(error){
-            // log and send techops email
-            console.log('Error sending date accepted email: ' + error);
-        } else{
-            console.log('Message sent: ' + response.message);
-        }
-    });
+    console.log('Sending DateAcceptedEmail: ' + JSON.stringify(mailOptions));
+    // mailClient.sendMail(mailOptions, function(error, response){
+    //     if(error){
+    //         // log and send techops email
+    //         console.log('Error sending date accepted email: ' + error);
+    //     } else{
+    //         console.log('Message sent: ' + response.message);
+    //     }
+    // });
 }
 
 exports.mailClient = mailClient;

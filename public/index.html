@@ -124,7 +124,7 @@
       <form data-bind="submit: addProposal">
         <div id="map-canvas"></div>
         <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: Joes Crab Shack" />
-        <input class="lg-input" type="text" data-bind="value: time" />
+        <input class="lg-input" type="date" data-bind="value: time" />
         <textarea id="message-area" data-bind="value: message"></textarea>
         <button id="submit-proposal" type="submit">Submit</button>
       </form>
@@ -141,6 +141,7 @@
           <div class="user-profile photo" data-bind="style: {'background-image': photo_large}"></div>
         </div>
         <button id="accept-proposal" data-bind="click: $parent.acceptProposal">Accept</button>
+        <button id="reject-proposal" data-bind="click: $parent.rejectProposal">Reject</button>
       </div>
     </div>
   </script>

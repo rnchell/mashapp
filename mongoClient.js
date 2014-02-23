@@ -140,7 +140,7 @@ exports.updateProposedDate = function(req, res){
         } else{
             console.log(date);
 
-            if(date.acceptedCount == 2){
+            if(date.acceptedCount >= 2){
                 // date was accepted by both participants
                 // maybe log somewhere?
 
@@ -148,6 +148,13 @@ exports.updateProposedDate = function(req, res){
                 mailClient.sendDateAcceptedEmail(date);
 
                 //TODO: remove date from database
+                db.collection('dates').remove({_id: date._id}, {safe:true}, function(err, result){
+                    if(err){
+                        console.log('Error removing date: ' + err);
+                    } else{
+                        console.log(result);
+                    }
+                });
                 //TODO: remove date from users and update them
             }
 
@@ -161,6 +168,9 @@ exports.deleteDate = function(req, res){
 }
 
 exports.rejectProposedDate = function(req, res){
+    
+    console.log('Rejecting proposed date');
+
     var user_id = req.body.id;
     var date = req.body.date;
 
@@ -190,10 +200,10 @@ exports.rejectProposedDate = function(req, res){
                             console.log('Error removing dates from user: ' + err);
 
                             //res.send({'error':'An error has occurred'});
-
+                            res.end(err);
                         } else {
                             console.log('' + result + ' document(s) updated');
-
+                            res.end('success');
                             //res.send(user);
                         }
 
