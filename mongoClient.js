@@ -4,15 +4,16 @@ var mongo = require('mongodb'),
     _ = require('./public/lib/underscore'),
     moment = require('./public/lib/moment'),
     ObjectID = require('mongodb').ObjectID,
-    mailClient = require('./mailclient')
+    mailClient = require('./mailclient'),
+    config = require('./config').config
 
 var db;
 
 exports.connect = function(){
 
     console.log('trying to connect to mongo...');
-
-    MongoClient.connect('mongodb://devuser:powerglove@ds033459.mongolab.com:33459/mashdev', function(err, mdb) {
+    console.log(config.DATABASE_URI);
+    MongoClient.connect(config.DATABASE_URI, function(err, mdb) {
 
       if(!err){
         console.log('connected to mashdev mongodb');
@@ -246,7 +247,7 @@ exports.addUser = function(req, res) {
                 res.send({'error':'An error has occurred'});
             } else {
                 console.log('Success: ' + JSON.stringify(result[0]));
-                //mailClient.sendNewUserEmail(user);
+                mailClient.sendNewUserEmail(user);
                 res.send(result[0]);
             }
         });

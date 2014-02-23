@@ -1,10 +1,11 @@
-var nodemailer = require("nodemailer");
+var nodemailer = require("nodemailer"),
+    config = require('./config').config;
 
 var mailClient = nodemailer.createTransport("SMTP",{
     service: "Gmail",
     auth: {
-        user: "user@gmail.com",
-        pass: "password"
+        user: config.EMAIL_USER_NAME,
+        pass: config.EMAIL_PASSWORD
     }
 });
 
@@ -15,9 +16,9 @@ exports.sendNewUserEmail = function(user){
     var mailOptions = {
         from: fromEmail,
         to: user.email,
-        subject: "Welcome to Mash",
+        subject: "Welcome to Tangle",
         text: "Tangle: Hook up your friends!",
-        html: "<h2>Tangle: Hook up your friends!</h2><p>Welcome, " + user.name + "!</p>"
+        html: "<h2>Tangle</h2> <h3>Hook up your friends!</h3><p>Welcome, " + user.name + "!</p>"
     };
 
     mailClient.sendMail(mailOptions, function(error, response){
