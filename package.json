@@ -1,0 +1,28 @@
+{
+  "name": "tangle",
+  "version": "0.0.0",
+  "description": "a new dating app",
+  "main": "config.js",
+  "dependencies": {
+    "connect": "~2.13.0",
+    "express": "~3.4.8",
+    "mongodb": "~1.3.23",
+    "nodemailer": "~0.6.0",
+    "redis": "~0.10.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rnchell/mashapp.git"
+  },
+  "author": "Buddy Chell and Ben Zulauf",
+  "license": "BSD",
+  "gitHead": "d4bb5f2ab3de67c26958d0721e5b745ec770df90",
+  "bugs": {
+    "url": "https://github.com/rnchell/mashapp/issues"
+  }
+}
