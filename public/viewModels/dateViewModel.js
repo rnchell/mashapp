@@ -20,8 +20,8 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
           location: self.location(),
           time: self.time,
           // TODO: decide if we need all photo sizes or just one
-          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, photo_large: u.photo_large } }),
-          matchmaker: self.matchmaker.name
+          participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, email: u.email, photo_large: u.photo_large } }),
+          matchmaker: { name: self.matchmaker.name, email: self.matchmaker.email }
         } 
       },
       function(data){

@@ -49,11 +49,13 @@ app.get('/user/:id', mongoClient.getById);
 
 app.get('/dates/', mongoClient.getDates);
 
-app.post('/user/dates', mongoClient.updateProposedDate);
+app.post('/user/dates/accept/', mongoClient.updateProposedDate);
+
+app.post('/user/dates/reject/', mongoClient.rejectProposedDate);
 
 app.post('/user/add', mongoClient.addUser);
 
-app.post('/user/update/:id', mongoClient.updateUser);
+app.post('/user/update/', mongoClient.updateUser);
 
 app.post('/dates/add', mongoClient.addDate);
 

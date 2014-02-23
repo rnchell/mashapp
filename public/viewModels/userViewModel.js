@@ -18,7 +18,10 @@ var UserViewModel = function(user){
   	self.saveStatus();
   };
   self.saveStatus = function () {
-    $.post('/user/update/' + self.user._id, {status: self.status()}, function(data){
+
+    self.user.status = self.status();
+
+    $.post('/user/update/', user, function(data){
       console.log(data)
   	});
   };
@@ -46,7 +49,16 @@ var UserViewModel = function(user){
 
   self.acceptProposal = function(date){
     console.log('ACCEPTING PROPOSAL: ' + date._id);
-    $.post('/user/dates', {id: date._id},function(data){
+    $.post('/user/dates/accept/', {id: date._id},function(data){
+      self.datesHolder.remove(date);
+      self.dates.remove(date._id);
+    });
+  }
+
+  self.rejectProposal = function(date){
+    console.log('REJECTING PROPOSAL: ' + date._id);
+
+    $.post('/user/dates/reject/', {id: self.user._id, date: date}, function(data){
       self.datesHolder.remove(date);
       self.dates.remove(date._id);
     });
