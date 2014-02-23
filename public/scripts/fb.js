@@ -162,7 +162,7 @@ $(function(){
       //var ids = Object.keys(photo_hash);
       var ids = _.map(friend_list, function(f){ return f.id; });
 
-      $.get('/friends/?ids=' + ids.join('&ids='), function(data){
+      $.post('/friends/', {ids: ids}, function(data){
         if(data){
           var friends = [];
 

@@ -59,7 +59,7 @@ app.post('/user/update/', mongoClient.updateUser);
 
 app.post('/dates/add', mongoClient.addDate);
 
-app.get('/friends/', mongoClient.getFriends);
+app.post('/friends/', mongoClient.getFriends);
 
 app.delete('/user/delete/:id', mongoClient.deleteUser);
 

@@ -62,12 +62,13 @@ exports.getAll = function(req, res) {
 };
 
 exports.getFriends = function(req, res){
-    var url_parts = url.parse(req.url, true);
-    var query = url_parts.query;
+    //var url_parts = url.parse(req.url, true);
+    //var query = url_parts.query;
+    var ids = req.body.ids;
 
     db.collection('users', function(err, collection){
 
-        collection.find({ _id : { $in : query.ids } }).sort({ name: 1 }).toArray(function(err, items){
+        collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
 
             if(err){
                 console.log('Error getting user friends: ' + err);
