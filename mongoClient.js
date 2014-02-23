@@ -179,7 +179,7 @@ exports.rejectProposedDate = function(req, res){
     var rejectee = _.find(date.participants, function(u){ return u._id != user_id; });
     var rejector = _.find(date.participants, function(u){ return u._id == user_id; });
 
-    var ids = _.map(date.participants, function(u){ return u._id ;});
+    var ids = _.map(date.participants, function(u){ return u._id;});
 
     if(date.acceptedCount == 1){
         // send rejection email
