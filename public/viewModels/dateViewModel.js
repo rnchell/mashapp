@@ -7,7 +7,7 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
   self.participants = participants;
   self.time = time;
   self.location = ko.observable(location);
-  self.message = ko.observable("Your message here...");
+  self.message = ko.observable("Love ya both. You should go on this date!");
 
   self.addProposal = function(){
     $.post('/dates/add/', 

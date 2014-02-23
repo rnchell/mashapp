@@ -43,7 +43,7 @@ var UserViewModel = function(user){
 
   self.getOtherParticipant = function(date, id) {
       return ko.utils.arrayFirst(date.participants, function(item) {
-          return item._id !== id;
+        return item._id !== id;
       });
   };
 
