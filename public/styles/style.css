@@ -5,6 +5,26 @@ body {
 	color: #2a2a2a;
 }
 
+#home-container {
+	margin-top: 80px;
+}
+
+.left {
+	width: 561px;
+	float: left;
+	margin-right: 40px;
+}
+
+.right {
+	float: left;
+}
+
+.line {
+	height: 2px;
+	background-color: #00A8B2;
+	width: 200px;
+}
+
 #container {
 	margin: 0px auto 50px auto;
 	width: 960px;
@@ -33,24 +53,26 @@ body {
 	font-size: 2.0em;
 	line-height: 50px;
 	float: left;
-	color: #ed0000;
+	color: #00A8B2;
 	cursor: pointer;
 }
 
 #lg-logo {
 	font-size: 2.5em;
-	color: #ed0000;
-	margin: 20px 0px 60px 0px;
+	color: #00A8B2;
+	margin: 20px 0px 20px 0px;
 }
 
 #slogan {
-	text-align: center;
-	font-size: 5.0em;
+	font-size: 2.0em;
 	font-weight: 300;
+	margin-bottom: 60px;
 }
 
 #fb-button {
-	margin: 60px auto 10px auto;
+	margin-top: 60px;
+	font-weight: normal;
+	font-size: 1.2em;
 	background-color: #3B5999;
 	border-radius: 35px;
 	color: #FFF;
@@ -109,10 +131,10 @@ body {
 
 
 #disclaimer {
-	text-align: center;
 	color: #aaa;
-	line-height: 150%;
+	font-weight: 300;
 	font-size: 1.0em;
+	margin-top: 20px;
 }
 
 #account-view{
