@@ -6,7 +6,7 @@ body {
 }
 
 #container {
-	margin: 0 auto;
+	margin: 0px auto 50px auto;
 	width: 960px;
 }
 
@@ -60,6 +60,7 @@ body {
 	background-image: url('../img/facebook.png');
 	background-position: 30px center;
 	background-repeat: no-repeat;
+	border-top: 2px solid #4467b3;
 	border-bottom: 4px solid #293e6b;
 	border-right: 2px solid #293e6b;
 	border-left: 2px solid #293e6b;
@@ -67,6 +68,7 @@ body {
 
 #fb-button:active {
   border: none;
+  border-top: 2px solid #293e6b;
 }
 
 #endorser-container {
@@ -204,6 +206,15 @@ body {
 	border: 3px solid #DDD;
 }
 
+.date-image-container {
+	height: 180px;
+	width: 180px;
+	overflow: hidden;
+	border-radius: 100px;
+	border: 3px solid #DDD;
+	margin: 10px auto;
+}
+
 .user-name {
 	color: #AAA;
 	text-align: center;
@@ -238,6 +249,7 @@ button {
 	border-radius: 35px;
 	color: #FFF;
 	margin: 30px auto;
+	border-top: 2px solid #ff0000;
 	border-bottom: 4px solid #bf0000;
 	border-right: 2px solid #bf0000;
 	border-left: 2px solid #bf0000;
@@ -251,13 +263,14 @@ button {
 	background-color: #ed0000;
 	height: 50px;
 	padding: 0px 30px;
-	border-radius: 35px;
+	border-radius: 38px;
 	color: #FFF;
 	float: left;
-	margin: 30px 30px 0px 30px;
+	margin: 30px 10px 0px 0px;
+	border-top: 2px solid #ff0000;
+	border-left: 2px solid #bf0000;
 	border-bottom: 4px solid #bf0000;
 	border-right: 2px solid #bf0000;
-	border-left: 2px solid #bf0000;
 }
 
 #accept-proposal:active {
@@ -270,7 +283,8 @@ button {
 	padding: 0px 30px;
 	border-radius: 35px;
 	float: left;
-	margin: 30px 30px 0px 30px;
+	margin: 30px 0px 0px 0px;
+	border-top: 2px solid #e2e2e2;
 	border-bottom: 4px solid #aaa;
 	border-right: 2px solid #aaa;
 	border-left: 2px solid #aaa;
@@ -312,6 +326,13 @@ input {
 	margin: 0 auto;
 	border: 5px solid #DDD;
 }
+
+.date {
+	padding: 20px;
+	line-height: 150%;
+	text-align: center;
+}
+
 
 .lg-input {
   width: 480px;
