@@ -5,7 +5,9 @@ var mongo = require('mongodb'),
     moment = require('./public/lib/moment'),
     ObjectID = require('mongodb').ObjectID,
     mailClient = require('./mailclient'),
-    config = require('./config').config
+    config = require('./config').config,
+    ejs = require('ejs'),
+    fs = require('fs')
 
 var db;
 
@@ -28,6 +30,27 @@ exports.connect = function(){
 exports.close = function(){
     mailClient.close();
 };
+
+exports.email = function(req, res){
+    // res.render('newdateproposalemailtemplate.html', {title: 'tangle', name: "buddy chell"}, function(err, html){
+    //     if(err) {
+    //         console.log(err);
+    //         res.end('404');
+    //     } else {
+    //         res.end(html);
+    //     }
+    // });
+    
+    fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
+        if(!err) {
+            mailClient.sendDateProposalEmail(date, html);
+        } else {
+            console.log(err);
+        }
+    });
+
+    res.end('');
+}
 
 exports.getById = function(req, res) {
 
@@ -120,8 +143,16 @@ exports.addDate = function(req, res){
                         if(err){
                             console.log('Error adding date to user: ' + err);
                         } else {
-                            mailClient.sendDateProposalEmail(date);
+
                             res.end('success');
+
+                            fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
+                                if(!err) {
+                                    mailClient.sendDateProposalEmail(date, html);
+                                } else {
+                                    console.log(err);
+                                }
+                            });
                         }
                     });
                 });
@@ -207,7 +238,13 @@ exports.rejectProposedDate = function(req, res){
 
     if(date.acceptedCount == 1){
         // send rejection email
-        mailClient.sendRejectionEmail(date, rejectee, rejector);
+        fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
+            if(!err) {
+                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
+            } else {
+                console.log('Error sending rejection email: ' + err);
+            }
+        });
     }
 
     db.collection('dates', function(err, collection){
@@ -270,8 +307,17 @@ exports.addUser = function(req, res) {
                 res.send({'error':'An error has occurred'});
             } else {
                 console.log('Success: ' + JSON.stringify(result[0]));
-                mailClient.sendNewUserEmail(user);
                 res.send(result[0]);
+
+                // send new user email
+                res.render('newuseremailtemplate.html', {title: 'tangle', name: user.name }, function(err, html){
+                    if(err) {
+                        // need to send to techops
+                        console.log("Error sending new user email: " + err);
+                    } else {
+                        mailClient.sendNewUserEmail(user, html);
+                    }
+                });
             }
         });
     });

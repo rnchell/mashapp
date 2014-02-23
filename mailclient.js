@@ -1,5 +1,6 @@
 var nodemailer = require("nodemailer"),
-    config = require('./config').config;
+    config = require('./config').config,
+    ejs = require('ejs')
 
 var mailClient = nodemailer.createTransport("SMTP",{
     service: "Gmail",
@@ -11,14 +12,14 @@ var mailClient = nodemailer.createTransport("SMTP",{
 
 var fromEmail = "Tangle <tangle@gmail.com>";
 
-exports.sendNewUserEmail = function(user){
+exports.sendNewUserEmail = function(user, html){
 
     var mailOptions = {
         from: fromEmail,
         to: user.email,
         subject: "Welcome to Tangle",
         text: "Tangle: Hook up your friends!",
-        html: "<h2>Tangle</h2> <h3>Hook up your friends!</h3><p>Welcome, " + user.name + "!</p>"
+        html: html
     };
 
     mailClient.sendMail(mailOptions, function(error, response){
@@ -30,19 +31,21 @@ exports.sendNewUserEmail = function(user){
     });
 }
 
-exports.sendDateProposalEmail = function(date){
+exports.sendDateProposalEmail = function(date, template){
 
     for(var i=0; i < date.participants.length; i++){
         
+        var currentUser = date.participants[(i + 1) % date.participants.length];
+
         var mailOptions = {
             from: fromEmail,
-            to: date.participants[(i + 1) % date.participants.length].email,
+            to: currentUser.email,
             subject: "You have a new date proposal!",
             text: date.matchmaker.name + " has proposed a date between you and " + date.participants[i].name + "!",
-            html: "<h1>" + date.matchmaker.name + " has proposed a date between you and " + date.participants[i].name + " at " + date.location + "</h1><p><strong>Location:</strong> " + date.location + ".</p>"
+            html: ejs.render(template, {title: 'tangle', date: date, other: currentUser})
         };
 
-        console.log('Sending email to: ' + date.participants[(i + 1) % date.participants.length]);
+        console.log('Sending email to: ' + currentUser.email);
         console.log(mailOptions);
         
         mailClient.sendMail(mailOptions, function(error, response){
@@ -57,17 +60,18 @@ exports.sendDateProposalEmail = function(date){
 
 }
 
-exports.sendRejectionEmail = function(date, rejectee, rejector){
+exports.sendRejectionEmail = function(date, rejectee, rejector, template){
 
     var mailOptions = {
         from: fromEmail,
-        to: rejectee.email,
+        to: 'rnchell@gmail.com',//rejectee.email,
         subject: rejector.name + " is a fool.",
         text: 'Tangle\r\n' + rejector.name + ' is a fool.',
-        html: '<h1>Tangle</h1><br><br><p>' + rejector.name + ' is a fool.'
+        html: ejs.render(template, {title: 'tangle', date: date, rejector: rejector})
     };
 
     console.log('Sending RejectionEmail: ' + JSON.stringify(mailOptions));
+    
     mailClient.sendMail(mailOptions, function(error, response){
         if(error){
             // log and send techops email

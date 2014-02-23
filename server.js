@@ -1,8 +1,9 @@
 var express = require("express"),
 	fs = require('fs'),
 	app = express(),
-	port = parseInt(process.env.PORT, 10) || 3000,
-	mongoClient = require('./mongoClient')
+	port = parseInt(process.env.PORT, 10) || 5000,
+	mongoClient = require('./mongoClient'),
+	engines = require('consolidate')
 
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
@@ -20,6 +21,8 @@ app.configure(function () {
 	app.use(express.json());
 	app.use(express.urlencoded());
 	app.use(express.static(__dirname + '/public'));
+	app.set('views', __dirname + '/public/templates');
+	app.engine('html', engines.ejs);
 });
 
 // client.on("connect", function () {
@@ -37,13 +40,19 @@ app.configure(function () {
 // 	console.log("Error " + err);
 // });
 
-app.get('/', function (req, res) {
-	fs.readFile('index.html', function (err, html) {
-		res.writeHeader(200, {"Content-Type": "text/html"});
-		res.write(html);
-		res.end();
-	});
-});
+// app.get('/', function (req, res) {
+// 	// fs.readFile('index.html', function (err, html) {
+// 	// 	res.writeHeader(200, {"Content-Type": "text/html"});
+// 	// 	res.write(html);
+// 	// 	res.end();
+// 	// });
+// 	res.render('emailtemplate.html', {title: 'tangle'}, function(err, html){
+// 		console.log(err);
+// 		console.log(html);
+// 	});
+// });
+
+app.get('/email', mongoClient.email);
 
 app.get('/user/:id', mongoClient.getById);
 
