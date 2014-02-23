@@ -135,7 +135,7 @@
     <div class="section-header">Dates</div>
     <div id="dates" data-bind="foreach: datesHolder">
       <div class="date">
-        <div data-bind="text: matchmaker"></div> proposed a date with 
+        <div data-bind="text: matchmaker.name"></div> proposed a date with 
         <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
           <div data-bind="text: name"></div>
           <div class="user-profile photo" data-bind="style: {'background-image': photo_large}"></div>

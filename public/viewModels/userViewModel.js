@@ -52,6 +52,8 @@ var UserViewModel = function(user){
     $.post('/user/dates/accept/', {id: date._id},function(data){
       self.datesHolder.remove(date);
       self.dates.remove(date._id);
+
+      viewModel.goToHomeView();
     });
   }
 
@@ -61,6 +63,8 @@ var UserViewModel = function(user){
     $.post('/user/dates/reject/', {id: self.user._id, date: date}, function(data){
       self.datesHolder.remove(date);
       self.dates.remove(date._id);
+
+      viewModel.goToHomeView();
     });
   }
 };

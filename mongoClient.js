@@ -174,8 +174,12 @@ exports.rejectProposedDate = function(req, res){
     var user_id = req.body.id;
     var date = req.body.date;
 
+    console.log('Rejecting: ' + JSON.stringify(date));
+
     var rejectee = _.find(date.participants, function(u){ return u._id != user_id; });
     var rejector = _.find(date.participants, function(u){ return u._id == user_id; });
+
+    var ids = _.map(date.participants, function(u){ return u._id ;});
 
     if(date.acceptedCount == 1){
         // send rejection email
@@ -183,7 +187,7 @@ exports.rejectProposedDate = function(req, res){
     }
 
     db.collection('dates', function(err, collection){
-        collection.remove({_id: date._id}, {safe:true}, function(err, result){
+        collection.remove({_id: ObjectID(date._id)}, {safe:true}, function(err, result){
 
             if (err) {
                 res.send({'error':'An error has occurred - ' + err});
@@ -194,7 +198,7 @@ exports.rejectProposedDate = function(req, res){
                 // remove date from both participants
                 db.collection('users', function(err, usersCollection){
 
-                    usersCollection.update({ $in : query.ids }, { $pull: { dates: date._id }}, {safe: true, multi: true}, function(err, result){
+                    usersCollection.update({ _id : { $in : ids } },{ $pull: { dates: ObjectID(date._id) }},{ multi: true }, function(err, result){
 
                         if (err) {
                             console.log('Error removing dates from user: ' + err);
