@@ -198,9 +198,6 @@ exports.updateProposedDate = function(req, res){
                 // date was accepted by both participants
                 // maybe log somewhere?
 
-                // send email to everyone
-                mailClient.sendDateAcceptedEmail(modified_date);
-
                 //TODO: remove date from database
                 db.collection('dates').remove({_id: modified_date._id}, {safe:true}, function(err, result){
                     if(err){
@@ -208,6 +205,14 @@ exports.updateProposedDate = function(req, res){
                     } else{
                         console.log(result);
                         res.end(JSON.stringify(result));
+                    }
+                });
+
+                fs.readFile(__dirname + '/public/templates/DateEmailTemplate.html', 'utf-8', function(err, html) {
+                    if(!err) {
+                        mailClient.sendDateAcceptedEmail(modified_date, html);
+                    } else {
+                        console.log(err);
                     }
                 });
             } else {

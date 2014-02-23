@@ -42,7 +42,7 @@ exports.sendDateProposalEmail = function(date, template){
             to: currentUser.email,
             subject: "You have a new date proposal!",
             text: date.matchmaker.name + " has proposed a date between you and " + date.participants[i].name + "!",
-            html: ejs.render(template, {title: 'tangle', date: date, other: currentUser})
+            html: ejs.render(template, {title: 'tangle', date: date, other: date.participants[i]})
         };
 
         console.log('Sending email to: ' + currentUser.email);
@@ -82,14 +82,14 @@ exports.sendRejectionEmail = function(date, rejectee, rejector, template){
     });
 }
 
-exports.sendDateAcceptedEmail = function(date){
+exports.sendDateAcceptedEmail = function(date, template){
 
     var mailOptions = {
         from: fromEmail,
         to: date.participants[0].email + ', ' + date.participants[1].email + ', ' + date.matchmaker.email,
         subject: "The date is on!",
         text: "Location: " + date.location + "\r\n" + "Time: " + date.time,
-        html: "<p><strong>Location:</strong> " + date.location + "<br>Time: " + date.time 
+        html: ejs.render(template, { title: 'tangle', date: date, first: date.participants[0], second: date.participants[1]})
     };
 
     console.log('Sending DateAcceptedEmail: ' + JSON.stringify(mailOptions));
