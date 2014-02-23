@@ -7,7 +7,7 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
   self.participants = participants;
   self.time = time;
   self.location = ko.observable(location);
-  self.message = ko.observable(message);
+  self.message = ko.observable("Your message here...");
 
   self.addProposal = function(){
     $.post('/dates/add/', 
@@ -28,5 +28,6 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
         console.log(data);
       }
     );
+    viewModel.goToHomeView();
   };
 };

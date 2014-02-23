@@ -117,13 +117,12 @@
   </script>
 
   <script id="proposalTemplate" type="text/html">
-    <div class="section-header" data-bind="foreach: participants">
+    <div class="instruction" data-bind="foreach: participants">
       <span data-bind="text: name" + " "></span>
     </div>
-    <div id="proposal-container">
+    <div class="date-container">
       <form data-bind="submit: addProposal">
-        <div id="map-canvas"></div>
-        <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: Joes Crab Shack" />
+        <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
         <input class="lg-input" type="date" data-bind="value: time" />
         <textarea id="message-area" data-bind="value: message"></textarea>
         <button id="submit-proposal" type="submit">Submit</button>
@@ -132,13 +131,12 @@
   </script>
 
   <script id="datesTemplate" type="text/html">
-    <div class="section-header">Dates</div>
-    <div id="dates" data-bind="foreach: datesHolder">
+    <div class="instruction">Lucky you.</div>
+    <div id="dates" class="date-container" data-bind="foreach: datesHolder">
       <div class="date">
         <div data-bind="text: matchmaker.name"></div> proposed a date with 
         <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
           <div data-bind="text: name"></div>
-          <div class="user-profile photo" data-bind="style: {'background-image': photo_large}"></div>
         </div>
         <button id="accept-proposal" data-bind="click: $parent.acceptProposal">Accept</button>
         <button id="reject-proposal" data-bind="click: $parent.rejectProposal">Reject</button>
