@@ -235,9 +235,49 @@ button {
 	background-color: #ed0000;
 	height: 50px;
 	padding: 0px 30px;
-	border-radius: 50px;
+	border-radius: 35px;
 	color: #FFF;
-	margin: 20px auto;
+	margin: 30px auto;
+	border-bottom: 4px solid #bf0000;
+	border-right: 2px solid #bf0000;
+	border-left: 2px solid #bf0000;
+}
+
+#submit-proposal:active {
+	border: none;
+}
+
+#accept-proposal {
+	background-color: #ed0000;
+	height: 50px;
+	padding: 0px 30px;
+	border-radius: 35px;
+	color: #FFF;
+	float: left;
+	margin: 30px 30px 0px 30px;
+	border-bottom: 4px solid #bf0000;
+	border-right: 2px solid #bf0000;
+	border-left: 2px solid #bf0000;
+}
+
+#accept-proposal:active {
+	border: none;
+}
+
+#reject-proposal {
+	background-color: #ddd;
+	height: 50px;
+	padding: 0px 30px;
+	border-radius: 35px;
+	float: left;
+	margin: 30px 30px 0px 30px;
+	border-bottom: 4px solid #aaa;
+	border-right: 2px solid #aaa;
+	border-left: 2px solid #aaa;
+}
+
+#reject-proposal:active {
+	border: none;
 }
 
 textarea {
@@ -267,7 +307,7 @@ input {
 	padding: 10px
 }
 
-#proposal-container {
+.date-container {
 	width: 500px;
 	margin: 0 auto;
 	border: 5px solid #DDD;
