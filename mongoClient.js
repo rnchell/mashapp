@@ -256,16 +256,13 @@ exports.addUser = function(req, res) {
  
 exports.updateUser = function(req, res) {
 
-    var id = req.params.id;
     var user = req.body;
-
-    console.log('Updating user: ' + id);
 
     console.log(JSON.stringify(user));
 
     db.collection('users', function(err, collection) {
 
-        collection.update({'_id': id}, user, {safe:true}, function(err, result) {
+        collection.update({'_id': user._id}, user, {safe:true}, function(err, result) {
 
             if (err) {
                 console.log('Error updating user: ' + err);
