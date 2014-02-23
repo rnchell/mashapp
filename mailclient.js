@@ -64,7 +64,7 @@ exports.sendRejectionEmail = function(date, rejectee, rejector, template){
 
     var mailOptions = {
         from: fromEmail,
-        to: 'rnchell@gmail.com',//rejectee.email,
+        to: rejectee.email,
         subject: rejector.name + " is a fool.",
         text: 'Tangle\r\n' + rejector.name + ' is a fool.',
         html: ejs.render(template, {title: 'tangle', date: date, rejector: rejector})
