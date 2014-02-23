@@ -17,15 +17,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bczulauf/mashapp.git"
+    "url": "https://github.com/rnchell/mashapp.git"
   },
   "author": "Buddy Chell and Ben Zulauf",
   "license": "BSD",
   "gitHead": "d4bb5f2ab3de67c26958d0721e5b745ec770df90",
   "bugs": {
-    "url": "https://github.com/bczulauf/mashapp/issues"
-  },
-  "engines": {
-    "node": "0.10.x"
+    "url": "https://github.com/rnchell/mashapp/issues"
   }
 }
