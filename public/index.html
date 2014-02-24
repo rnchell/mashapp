@@ -102,14 +102,39 @@
       <div class="date-container add-bottom">
         <form data-bind="submit: addProposal">
           <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
-          <input class="lg-input" type="date" data-bind="value: time" />
+          <input class="lg-input date-picker" type="date" data-bind="value: time" />
           <textarea id="message-area" data-bind="value: message"></textarea>
-          <button id="submit-proposal" type="submit">Submit</button>
+          <div class="clearfix">
+            <div class="payment-option clearfix selected-amount">
+              <div class="payment-icon">
+                <img src="img/heart.png" />
+              </div>
+              <div class="payment-amount">$0</div>
+            </div>
+            <div class="payment-option clearfix">
+              <div class="payment-icon">
+                <img src="img/coffee.png" />
+              </div>
+              <div class="payment-amount">$5</div>
+            </div>
+            <div class="payment-option clearfix">
+              <div class="payment-icon">
+                <img src="img/drink.png" />
+              </div>
+              <div class="payment-amount">$15</div>
+            </div>
+            <div class="payment-option clearfix">
+              <div class="payment-icon">
+                <img src="img/meal.png" />
+              </div>
+              <div class="payment-amount">$30</div>
+            </div>
+          </div>
+          <button id="submit-proposal" class="std-btn orange" type="submit">Submit</button>
         </form>
       </div>
     </div>
     <div class="three columns"></div>
-
     </script>
   </script>
 
@@ -118,30 +143,30 @@
       <div class="instruction">Lucky you.</div>
     </div>
     <div class="sixteen columns line add-bottom"></div>
-    <div class="six columns">&nbsp;</div>
-    <div class="four columns">
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
       <div data-bind="foreach: datesHolder">
-        <div>
-          <span data-bind="text: matchmaker.name"></span><span> has a date proposal for you:</span>
-        </div>
-        <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
-          <div class="user-container add-bottom">
-            <div class="user-image-container" data-bind="click: $parent.match, css: status">
+        <div class="date-container add-bottom">
+          <div class="add-bottom">
+            <span data-bind="text: matchmaker.name"></span><span> has a date proposal for you:</span>
+          </div>
+          <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
+            <div class="user-image add-bottom" data-bind="click: $parent.match, css: status">
               <img data-bind="attr: {src: photo_large}" />
             </div>
-            <div data-bind="text: name"></div>
+            <div class="date date-detail" data-bind="text: name"></div>
           </div>
-        </div>
-        <div data-bind="text: location"></div>
-        <div data-bind="text: time"></div>
-        <div data-bind="text: message"></div>
-        <div class="clearfix">
-        <button id="accept-proposal" data-bind="click: $parent.acceptProposal">Accept</button>
-        <button id="reject-proposal" data-bind="click: $parent.rejectProposal">Reject</button>
+          <div class="location date-detail" data-bind="text: location"></div>
+          <div class="date-time date-detail add-bottom" data-bind="text: time"></div>
+          <div class="add-bottom" data-bind="text: message"></div>
+          <div class="clearfix">
+            <button id="accept-proposal" class="std-btn orange" data-bind="click: $parent.acceptProposal">Accept</button>
+            <button id="reject-proposal" class="std-btn" data-bind="click: $parent.rejectProposal">Reject</button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="six columns"></div>
+    <div class="three columns"></div>
   </script>
 </body>
 </html>
