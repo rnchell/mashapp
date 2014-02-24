@@ -299,7 +299,7 @@ exports.addUser = function(req, res) {
         photo_normal: req.body.photo_normal,
         photo_large: req.body.photo_large,
         dates: [],
-        status: 'available'
+        status: 'single'
     };
 
     console.log('Adding user: ' + JSON.stringify(user));
@@ -315,7 +315,7 @@ exports.addUser = function(req, res) {
                 res.send(result[0]);
 
                 // send new user email
-                res.render('newuseremailtemplate.html', {title: 'tangle', name: user.name }, function(err, html){
+                res.render('NewUserEmailTemplate.html', {title: 'tangle', name: user.name }, function(err, html){
                     if(err) {
                         // need to send to techops
                         console.log("Error sending new user email: " + err);

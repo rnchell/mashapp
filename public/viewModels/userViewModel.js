@@ -10,10 +10,10 @@ var UserViewModel = function(user){
   self.isUserLoggedIn = true;
   
   self.toggleStatus = function () {
-  	if (self.status() === "available") {
+  	if (self.status() === "single") {
       self.status("taken");
   	} else {
-  		self.status("available")
+  		self.status("single")
   	}
   	self.saveStatus();
   };
