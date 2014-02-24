@@ -1,3 +1,11 @@
+/*colors
+blue = #00A8B2;
+green = #B5D655;
+tan = #F7F6F3;
+orange = #F27E00;
+red = #E81610;
+yellow = #FFC61B;*/
+
 body {
 	margin: 0px;
 	padding: 0px;
@@ -164,11 +172,11 @@ body {
 }
 
 #status.available {
-	background-color: #2dc200;
+	background-color: #B5D655;
 }
 
 #status.taken {
-  background-color: #f2de00;
+  background-color: #FFC61B;;
 }
 
 #status-button {
@@ -197,7 +205,7 @@ body {
 }
 
 #alert {
-  background-color: #ed0000;
+  background-color: #E81610;
   position: absolute;
   top: -5px;
   right: -65px;
@@ -205,26 +213,24 @@ body {
 }
 
 .instruction {
-	font-size: 2.5em;
+	font-size: 1.5em;
 	font-weight: 300;
-	border-bottom: 1px solid #DDD;
-	text-align: center;
-	height: 50px;
-	line-height: 50px;
-	margin: 60px auto 60px auto;
-	padding-bottom: 10px;
+	margin: 30px 0px;
 }
 
 .user-container {
 	float: left;
 	margin: 0px 10px 10px 0px;
+	box-shadow: 0px 1px 3px rgba(0,0,0,.4);
+	background-color: #f4eeec;
+	padding: 15px;
 }
 
 .user-image-container {
 	height: 180px;
 	width: 180px;
 	overflow: hidden;
-	border-radius: 100px;
+	border-radius: 3px;
 	border: 3px solid #DDD;
 }
 
@@ -238,21 +244,24 @@ body {
 }
 
 .user-name {
-	color: #AAA;
 	text-align: center;
-	margin-top: 5px;
+	margin-top: 10px;
 }
 
 .user-image-container.available {
-	border-color: #2dc200;
+	border-color: #B5D655;
 }
 
 .user-image-container.taken {
-	border-color: #f2de00;
+	border-color: #FFC61B;;
 }
 
 .user-image-container.selected {
-	border-color: #ed0000;
+	border-color: #E81610;
+}
+
+#friends-container {
+	margin-top: 30px;
 }
 
 button {
@@ -381,12 +390,12 @@ input {
 	bottom: 0px;
 	left: 0px;
 	right: 0px;
-	background-color: #FFF;
-	border-top: 1px solid #DDD;
+	background-color: #f4eeec;
+	border-top: 1px solid #cfcac9;
 	height: 50px;
 	line-height: 50px;
 	font-size: .8em;
-	color: #AAA;
+	color: #777;
 }
 
 #copyright {
