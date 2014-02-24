@@ -17,25 +17,9 @@ body {
 	margin-top: 80px;
 }
 
-.left {
-	width: 561px;
-	float: left;
-	margin-right: 40px;
-}
-
-.right {
-	float: left;
-}
-
 .line {
 	height: 2px;
 	background-color: #00A8B2;
-	width: 200px;
-}
-
-#container {
-	margin: 0px auto 50px auto;
-	width: 960px;
 }
 
 .cta {
@@ -68,7 +52,6 @@ body {
 #lg-logo {
 	font-size: 2.5em;
 	color: #00A8B2;
-	margin: 20px 0px 20px 0px;
 }
 
 #slogan {
@@ -161,7 +144,7 @@ body {
 #status {
 	float: right;
 	height: 50px;
-	width: 110px;
+	width: 90px;
 	border-radius: 25px;
 	line-height: 50px;
 	position: relative;
@@ -171,7 +154,7 @@ body {
 	font-size: 1.2em;
 }
 
-#status.available {
+#status.single {
 	background-color: #B5D655;
 }
 
@@ -188,15 +171,15 @@ body {
 	border-radius: 22px;
 }
 
-#status-button.available {
+#status-button.single {
 	left: 3px;
 }
 
 #status-button.taken {
-	left: 103px;
+	left: 83px;
 }
 
-#status-text.available {
+#status-text.single {
 	text-align: right;
 }
 
@@ -215,15 +198,11 @@ body {
 .instruction {
 	font-size: 1.5em;
 	font-weight: 300;
-	margin: 30px 0px;
 }
 
 .user-container {
-	float: left;
-	margin: 0px 10px 10px 0px;
 	box-shadow: 0px 1px 3px rgba(0,0,0,.4);
 	background-color: #f4eeec;
-	padding: 15px;
 }
 
 .user-image-container {
@@ -232,6 +211,7 @@ body {
 	overflow: hidden;
 	border-radius: 3px;
 	border: 3px solid #DDD;
+	margin: 17px;
 }
 
 .date-image-container {
@@ -245,10 +225,10 @@ body {
 
 .user-name {
 	text-align: center;
-	margin-top: 10px;
+	padding-bottom: 17px;
 }
 
-.user-image-container.available {
+.user-image-container.single {
 	border-color: #B5D655;
 }
 
@@ -258,10 +238,6 @@ body {
 
 .user-image-container.selected {
 	border-color: #E81610;
-}
-
-#friends-container {
-	margin-top: 30px;
 }
 
 button {
@@ -279,7 +255,7 @@ button {
 	padding: 0px 30px;
 	border-radius: 35px;
 	color: #FFF;
-	margin: 30px auto;
+	margin: 0px auto;
 	border-top: 2px solid #ff0000;
 	border-bottom: 4px solid #bf0000;
 	border-right: 2px solid #bf0000;
@@ -339,9 +315,11 @@ textarea {
 }
 
 #message-area {
-	width: 480px;
+  width: calc(100% - 20px);
 	display: block;
-	border-bottom: 2px solid #DDD;
+  border: 1px solid #cfcac9;
+  border-radius: 3px;
+  margin-bottom: 10px;
 }
 
 input {
@@ -353,21 +331,17 @@ input {
 }
 
 .date-container {
-	width: 500px;
-	margin: 0 auto;
-	border: 5px solid #DDD;
-}
-
-.date {
-	padding: 20px;
-	line-height: 150%;
-	text-align: center;
+	box-shadow: 0px 1px 3px rgba(0,0,0,.4);
+	background-color: #f4eeec;
+	padding: 40px;
 }
 
 
 .lg-input {
-  width: 480px;
-  border-bottom: 2px solid #DDD;
+  width: calc(100% - 20px);
+  margin-bottom: 10px;
+  border: 1px solid #cfcac9;
+  border-radius: 3px;
 }
 
 .title {
@@ -409,4 +383,83 @@ input {
 	cursor: pointer;
 }
 
-.clear{clear:both;display:block;overflow:hidden;visibility:hidden;width:0;height:0}.clearfix:after{clear:both;content:' ';display:block;font-size:0;line-height:0;visibility:hidden;width:0;height:0}* html .clearfix,*:first-child+html .clearfix{zoom:1}
+/* #Media Queries
+================================================== */
+
+/* Smaller than standard 960 (devices and browsers) */
+@media only screen and (max-width: 959px) {
+	
+	#home-container {
+		margin-top: 80px;
+	}
+}
+
+/* Tablet Portrait size to standard 960 (devices and browsers) */
+@media only screen and (min-width: 768px) and (max-width: 959px) {
+
+	img#home-image{
+    height: 85%;
+    width: 85%;
+	}
+
+	.user-image-container {
+		height: 132px;
+		width: 132px;
+	}
+}
+
+/* All Mobile Sizes (devices and browser) */
+@media only screen and (max-width: 767px) {
+
+	img#home-image{
+    height: 85%;
+    width: 85%;
+	}
+
+	.user-image-container {
+		height: 132px;
+		width: 132px;
+	}
+}
+
+/* Mobile Landscape Size to Tablet Portrait (devices and browsers) */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+	
+	#home-container {
+		margin-top: 40px;
+	}
+
+	#home-image {
+		display: none;
+	}
+
+	.user-image-container {
+		height: 180px;
+		width: 180px;
+	}
+
+}
+
+/* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
+@media only screen and (max-width: 479px) {
+	
+	#home-container {
+		margin-top: 40px;
+	}
+
+	#home-image {
+		display: none;
+	}
+
+	.user-image-container {
+		height: 180px;
+		width: 180px;
+	}
+}
+
+/* #Misc
+================================================== */
+	.remove-bottom { margin-bottom: 0 !important; }
+	.half-bottom { margin-bottom: 10px !important; }
+	.add-bottom { margin-bottom: 20px !important; }
+	.double-bottom { margin-bottom: 40px !important; }

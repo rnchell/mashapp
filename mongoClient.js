@@ -299,7 +299,7 @@ exports.addUser = function(req, res) {
         photo_normal: req.body.photo_normal,
         photo_large: req.body.photo_large,
         dates: [],
-        status: 'available'
+        status: 'single'
     };
 
     console.log('Adding user: ' + JSON.stringify(user));

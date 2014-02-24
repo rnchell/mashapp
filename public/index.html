@@ -12,6 +12,7 @@
   <script src="viewModels/friendsViewModel.js"></script>
   <script src="viewModels/userViewModel.js"></script>
   <script type="text/javascript" src="lib/moment.js"></script>
+  <link rel="stylesheet" type="text/css" href="/styles/grid.css">
   <link rel="stylesheet" type="text/css" href="/styles/style.css">
   <script type="text/javascript">
     $(document).on('click', '.user-image-container', function(){
@@ -21,7 +22,7 @@
 </head>
 <body>
   <div id="fb-root"></div>
-  <div id="container">
+  <div id="container" class="container">
     <div data-bind="ifnot: isUserLoggedIn">
       <div data-bind="template: { name: 'loginTemplate' }"></div>
     </div>
@@ -45,11 +46,11 @@
 
   <script id="loginTemplate" type="text/html">
     <div id="home-container" class="clearfix">
-      <div class="left">
-        <img src="img/friends.png">
+      <div class="ten columns">
+        <img id="home-image" src="img/friends.png">
       </div>
-      <div class="right">
-        <div id="lg-logo">
+      <div class="six columns">
+        <div id="lg-logo" class="add-bottom">
           tangle
         </div>
         <div id="slogan">Hook up your friends</div>
@@ -65,22 +66,24 @@
   </script>
 
   <script id="accountTemplate" type="text/html">
-    <div id="logo" data-bind="click: $root.goToHomeView">tangle</div>
-    <div id="account" class="cta lg-cta" data-bind="click: $root.goToDatesView">
-      <img data-bind="attr: {src: photo_small}" />
-    </div>
-    <div id="status" data-bind="css: status">
-      <div id="status-text" data-bind="text: status, css: status"></div>
-      <div id="status-button" data-bind="click: toggleStatus, css: status"></div>
-       <div id="alert" class="cta sm-cta" data-bind="visible: dates().length > 0, text: dates().length, click: $root.goToDatesView"></div>
+    <div class="header sixteen columns double-bottom">
+      <div id="logo" data-bind="click: $root.goToHomeView">tangle</div>
+      <div id="account" class="cta lg-cta" data-bind="click: $root.goToDatesView">
+        <img data-bind="attr: {src: photo_small}" />
+      </div>
+      <div id="status" data-bind="css: status">
+        <div id="status-text" data-bind="css: status"><span class="status-text" data-bind="text: status"></span></div>
+        <div id="status-button" data-bind="click: toggleStatus, css: status"></div>
+        <div id="alert" class="cta sm-cta" data-bind="visible: dates().length > 0, text: dates().length, click: $root.goToDatesView"></div>
+      </div>
     </div>
   </script>
 
   <script id="friendsTemplate" type="text/html">
-    <div id="user-instruction" class="instruction">Click two friends to propose a date</div>
-    <div class="line"></div>
-    <div id="friends-container" data-bind="foreach: users" class="clearfix">
-      <div class="user-container">
+    <div class="instruction sixteen columns add-bottom">Click two friends to propose a date</div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div data-bind="foreach: users">
+      <div class="user-container add-bottom four columns">
         <div class="user-image-container" data-bind="click: $parent.match, css: status">
           <img class="user-profile" data-bind="attr: {src: photo_large}" />
         </div>
@@ -90,31 +93,44 @@
   </script>
 
   <script id="proposalTemplate" type="text/html">
-    <div class="instruction" data-bind="foreach: participants">
+    <div class="instruction sixteen columns add-bottom" data-bind="foreach: participants">
       <span data-bind="text: name" + " "></span>
     </div>
-    <div class="date-container">
-      <form data-bind="submit: addProposal">
-        <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
-        <input class="lg-input" type="date" data-bind="value: time" />
-        <textarea id="message-area" data-bind="value: message"></textarea>
-        <button id="submit-proposal" type="submit">Submit</button>
-      </form>
+    <div class="sixteen columns line add-bottom"></div>
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
+      <div class="date-container add-bottom">
+        <form data-bind="submit: addProposal">
+          <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
+          <input class="lg-input" type="date" data-bind="value: time" />
+          <textarea id="message-area" data-bind="value: message"></textarea>
+          <button id="submit-proposal" type="submit">Submit</button>
+        </form>
+      </div>
     </div>
+    <div class="three columns"></div>
+
+    </script>
   </script>
 
   <script id="datesTemplate" type="text/html">
-    <div class="instruction">Lucky you.</div>
-    <div id="dates" class="date-container" data-bind="foreach: datesHolder">
-      <div class="date">
+    <div class="sixteen columns add-bottom">
+      <div class="instruction">Lucky you.</div>
+    </div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div class="six columns">&nbsp;</div>
+    <div class="four columns">
+      <div data-bind="foreach: datesHolder">
         <div>
           <span data-bind="text: matchmaker.name"></span><span> has a date proposal for you:</span>
         </div>
         <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
-          <div class="date-image-container" data-bind="click: $parent.match, css: status">
-            <img data-bind="attr: {src: photo_large}" />
+          <div class="user-container add-bottom">
+            <div class="user-image-container" data-bind="click: $parent.match, css: status">
+              <img data-bind="attr: {src: photo_large}" />
+            </div>
+            <div data-bind="text: name"></div>
           </div>
-          <div data-bind="text: name"></div>
         </div>
         <div data-bind="text: location"></div>
         <div data-bind="text: time"></div>
@@ -125,6 +141,7 @@
         </div>
       </div>
     </div>
+    <div class="six columns"></div>
   </script>
 </body>
 </html>
