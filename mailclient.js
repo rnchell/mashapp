@@ -10,15 +10,15 @@ var mailClient = nodemailer.createTransport("SMTP",{
     }
 });
 
-var fromEmail = "Tangle <tangle@gmail.com>";
+var fromEmail = "tangle <tangle@gmail.com>";
 
 exports.sendNewUserEmail = function(user, html){
 
     var mailOptions = {
         from: fromEmail,
         to: user.email,
-        subject: "Welcome to Tangle",
-        text: "Tangle: Hook up your friends!",
+        subject: "Welcome to tangle",
+        text: "tangle: Hook up your friends!",
         html: html
     };
 
