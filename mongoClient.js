@@ -300,7 +300,7 @@ exports.rejectProposedDate = function(req, res){
         // send rejection email
         fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
             if(!err) {
-                //mailClient.sendRejectionEmail(date, rejectee, rejector, html);
+                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
             } else {
                 console.log('Error sending rejection email: ' + err);
             }
