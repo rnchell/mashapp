@@ -31,7 +31,7 @@ app.get('/paypal/pay/', paypal.payRequest);
 
 app.get('/paypal/preapprove/', paypal.preApprove);
 
-app.get('/paypal/preapproval/success/', mongoClient.authorizePreapproval);
+app.get('/paypal/preapproval/success/', mongoClient.authorizePreapprovalTransaction);
 
 app.get('/paypal/cancel/', paypal.cancelPreapproval);
 

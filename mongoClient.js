@@ -12,18 +12,37 @@ var mongo = require('mongodb'),
 
 var db;
 
-exports.authorizePreapproval = function(req, res){
+exports.authorizePreapprovalTransaction = function(req, res){
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
 
-    console.log('PREAPPROVAL AUTHORIZED: ' + query.date_id);
+    console.log('UPDATING PREAPPROVAL TRANSACTION: ' + query.date_id);
     // update transaction in mongodb by approvalId and set status to 'approved'
     // if update successful, create date and return to home
 
-    // look up transaction by date_id, set status to 'authorized'
+    db.collection('transactions', function(err, collection) {
 
+        collection.update({'date_id': query.date_id}, { $set: { is_approved: true }}, {safe:true}, function(err, result) {
 
-    res.end(query.date_id);
+            if (err) {
+                console.log('Error updating transaction: ' + err);
+
+                //res.send({'error':'An error has occurred'});
+
+            } else {
+                console.log('' + result + ' tranaction(s) updated');
+
+                //res.send('' + result);
+
+            }
+        });
+    });
+
+    res.writeHead(301,
+      {Location: "http://localhost:5000/"}
+    );
+
+    res.end('');
 };
 
 exports.connect = function(){
@@ -84,7 +103,6 @@ exports.getById = function(req, res) {
 };
  
 exports.getByIds = function(req, res){
-
 };
 
 exports.getAll = function(req, res) {
@@ -221,7 +239,21 @@ exports.updateProposedDate = function(req, res){
                 // date was accepted by both participants
                 // maybe log somewhere?
 
-                //TODO: remove date from database
+                // if there is an amount on the date (or entry in transactions table)
+                if(modified_date.approval_transaction_id){
+                    console.log("APPROVAL TRANSACTION ID: " + modified_date.approval_transaction_id);
+
+                    db.collection('transactions', function(err, collection) {
+
+                        collection.findOne({'_id': modified_date.approval_transaction_id, 'is_approved': true}, function(err, item) {
+                            console.log('FOUND TRANSACTION TO RUN');
+
+                            paypal.sendPayments(item.paypal_approval_id, item.amount, modified_date.matchmaker.email, modified_date.participants[0].email, modified_date.participants[1].email);
+
+                        });
+                    });
+                }
+
                 db.collection('dates').remove({_id: modified_date._id}, {safe:true}, function(err, result){
                     if(err){
                         console.log('Error removing date: ' + err);
@@ -233,7 +265,7 @@ exports.updateProposedDate = function(req, res){
 
                 fs.readFile(__dirname + '/public/templates/DateEmailTemplate.html', 'utf-8', function(err, html) {
                     if(!err) {
-                        mailClient.sendDateAcceptedEmail(modified_date, html);
+                        //mailClient.sendDateAcceptedEmail(modified_date, html);
                     } else {
                         console.log(err);
                     }
@@ -276,6 +308,7 @@ exports.rejectProposedDate = function(req, res){
     }
 
     db.collection('dates', function(err, collection){
+        
         collection.remove({_id: ObjectID(date._id)}, {safe:true}, function(err, result){
 
             if (err) {
@@ -402,4 +435,41 @@ exports.deleteUser = function(req, res) {
 
 };
 
-exports.MongoClient = MongoClient;
+exports.addTransaction = function(date_id, approval_id, timestamp, amount){
+
+    var transaction = {
+        date_id: date_id,
+        paypal_approval_id: approval_id,
+        paypal_timestamp: timestamp, 
+        is_approved: false,
+        amount: parseFloat(amount)
+    };
+
+    db.collection('transactions', function(err, collection) {
+
+        collection.insert(transaction, {safe:true}, function(err, result) {
+
+            if (err) {
+                // should send email w details
+                console.log({'error':'An error has occurred adding a transaction for: ' + JSON.stringify(transaction)});
+            } else {
+                console.log('Success: ' + JSON.stringify(result[0]));
+
+                db.collection('dates', function(err, datesCollection){
+
+                    datesCollection.update({_id: ObjectID(date_id) }, { $set: { approval_transaction_id: result[0]._id }}, function(err, dateResult){
+                        if(err){
+                            console.log('error updating date transaction field: ' + err);
+                        } else {
+                            console.log(dateResult);
+                        }
+                    });
+                });
+            }
+        });
+    });
+}
+
+
+//exports.MongoClient = MongoClient;
+

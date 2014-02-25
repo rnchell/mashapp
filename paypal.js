@@ -1,12 +1,13 @@
 var http = require('https'),
 	url = require('url'),
-	config = require('./config').devPaypalConfig
+	config = require('./config').devPaypalConfig,
+	mongoClient = require('./mongoClient')
 
 var DEFAULT_PORT = 443;
 var DEFAULT_METHOD= 'POST';
 
 
-var cancelPreapproval = function(request, response){
+var cancelPreapproval = function(approval_id){
 
 	var url_parts = url.parse(request.url, true);
     var query = url_parts.query;
@@ -105,19 +106,15 @@ var preApprove = function(request, response){
 
 	  	if(data.responseEnvelope.ack.toLowerCase() === 'success'){
 	  		console.log('Preapproval Key: ' + data.preapprovalKey);
-	  		console.log('RETURN URL: ' + returnUrl);
-	  		// store in transaction table { user_id: user_id, date_id = date_id, timestamp: data.responseEnvelope.timestamp, sender: email, pin: "", preapprovalKey: data.preapprovalKey, status: "not-authorized"}
-	  		// specify return address to be /paypal/preapproval/success which will just update record
-	  		// now we can create a PayRequest passing in preapprovalKey and pin (optional)
 
-	  		//TODO: insert Transaction record with date_id
-	  		// then redirect to paypal
+	  		mongoClient.addTransaction(date_id, data.preapprovalKey, data.responseEnvelope.timestamp, amount);
 
 	  		response.writeHead(301,
 			  {Location: "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-preapproval&preapprovalkey=" + data.preapprovalKey}
 			);
 
-			response.end(JSON.stringify({preapprovalKey: data.preapprovalKey }));
+	  		response.end('');
+			//response.end(JSON.stringify({preapprovalKey: data.preapprovalKey }));
 	  	}
 	  });
 	});
@@ -257,6 +254,81 @@ var payRequest = function(request,response){
 	req.end();
 }
 
+var sendPayments = function(preapprovalKey, amount, sender, recipient1, recipient2){
+
+    var preapprovalKey = preapprovalKey;
+    var recipient1 = recipient1;
+    var recipient2 = recipient2;
+
+	var path = "/AdaptivePayments/Pay/";
+	var actionType = "PAY";
+	var senderEmail = sender;
+	var cancelUrl = "http://localhost:5000/?cancel";
+	var returnUrl = "http://localhost:5000/?success";
+	var currencyCode = "USD";
+	var recipient0Email = recipient1;
+	var recipient0Amount = amount/2.0;
+	var recipient1Email = recipient2;
+	var recipient1Amount = amount/2.0;
+	var errorLang = "en_US";
+
+	var options = {
+	  hostname: config.ENDPOINT,
+	  port: DEFAULT_PORT,
+	  path: path,
+	  method: DEFAULT_METHOD,
+	};
+
+	var req = http.request(options, function(res) {
+	  console.log('STATUS: ' + res.statusCode);
+	  console.log('HEADERS: ' + JSON.stringify(res.headers));
+	  res.setEncoding('utf8');
+
+	  res.on('data', function (chunk) {
+	  	console.log('BODY: ' + unescape(chunk));
+
+	  	console.log(JSON.parse(chunk));
+	  	data = JSON.parse(chunk);
+
+	  	if(data.responseEnvelope.ack.toLowerCase() === 'success'){
+	  		console.log('PayKey: ' + data.payKey);
+	  	}
+	  });
+	});
+
+	req.on('error', function(e) {
+	  console.log('problem with request: ' + e.message);
+	});
+
+	req.setHeader("X-PAYPAL-SECURITY-USERID", config.USER);
+	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", config.PWD);
+	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", config.SIGNATURE);
+	req.setHeader("X-PAYPAL-REQUEST-DATA-FORMAT", "NV") ;
+	req.setHeader("X-PAYPAL-RESPONSE-DATA-FORMAT", "JSON");
+	req.setHeader("X-PAYPAL-APPLICATION-ID", config.APPID); // SANDBOX APP ID, NEED TO GET OUR OWN
+	
+	var body = "reverseAllParallelPaymentsOnError=true&actionType=" + actionType;
+	body += "&clientDetails.applicationId=" + config.APPID;
+	//body += "&senderEmail=" + senderEmail;
+	body += "&currencyCode=" + currencyCode;
+	body += "&receiverList.receiver(0).email=" + recipient0Email;
+	body += "&receiverList.receiver(0).amount=" + recipient0Amount;
+	body += "&receiverList.receiver(1).email=" + recipient1Email;
+	body += "&receiverList.receiver(1).amount=" + recipient1Amount;
+	body += "&requestEnvelope.errorLanguage=" + errorLang;
+	body += "&returnUrl=" + returnUrl;
+	body += "&cancelUrl=" + cancelUrl;
+	body += "&preapprovalKey=" + preapprovalKey;
+
+	req.setHeader('content-length', body.length);
+
+	req.write(body);
+	
+	console.log(req);
+	req.end();
+}
+
 exports.payRequest = payRequest;
 exports.preApprove = preApprove;
 exports.cancelPreapproval = cancelPreapproval;
+exports.sendPayments = sendPayments;
