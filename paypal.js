@@ -9,11 +9,8 @@ var DEFAULT_METHOD= 'POST';
 
 var cancelPreapproval = function(approval_id){
 
-	var url_parts = url.parse(request.url, true);
-    var query = url_parts.query;
-
 	var path = "/AdaptivePayments/CancelPreapproval/";
-	var preapprovalKey = query.key;
+	var preapprovalKey = approval_id;
 	var errorLang = "en_US";
 
 	var options = {
@@ -37,7 +34,10 @@ var cancelPreapproval = function(approval_id){
 		if(data.responseEnvelope.ack.toLowerCase() === 'success'){
 			// log timestamp
 			// email user?
-			response.end(JSON.stringify(data));
+			console.log(JSON.stringify(data));
+	  	} else {
+	  		// should email techops
+	  		console.log('Error cancelling preapproval: ' + JSON.stringify(data));
 	  	}
 	  });
 	});
@@ -292,6 +292,7 @@ var sendPayments = function(preapprovalKey, amount, sender, recipient1, recipien
 
 	  	if(data.responseEnvelope.ack.toLowerCase() === 'success'){
 	  		console.log('PayKey: ' + data.payKey);
+	  		// maybe just update status to paid and store timestamp instead of deleting transactions, just in case
 	  	}
 	  });
 	});

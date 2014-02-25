@@ -300,7 +300,7 @@ exports.rejectProposedDate = function(req, res){
         // send rejection email
         fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
             if(!err) {
-                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
+                //mailClient.sendRejectionEmail(date, rejectee, rejector, html);
             } else {
                 console.log('Error sending rejection email: ' + err);
             }
@@ -317,6 +317,20 @@ exports.rejectProposedDate = function(req, res){
             } else {
                 console.log('' + result + ' date deleted');
 
+                if(date.approval_transaction_id){
+                    // remove transaction
+                    // cancel preapproval
+                    db.collection('transactions', function(err, collection) {
+
+                        collection.findAndModify({'_id': modified_date.approval_transaction_id },{safe: true, remove: true}, function(err, item) {
+                            console.log('FOUND TRANSACTION TO CANCEL');
+
+                            paypal.cancelPreapproval(item.paypal_approval_id);
+
+                        });
+                    });
+                }
+
                 // remove date from both participants
                 db.collection('users', function(err, usersCollection){
 
@@ -325,24 +339,18 @@ exports.rejectProposedDate = function(req, res){
                         if (err) {
                             console.log('Error removing dates from user: ' + err);
 
-                            //res.send({'error':'An error has occurred'});
                             res.end(err);
                         } else {
                             console.log('' + result + ' document(s) updated');
                             res.end('success');
-                            //res.send(user);
                         }
 
                     });
                 });
-
-                //res.send(req.body);
             }
 
         });
     });
-
-    //res.end('');
 }
 
 exports.addUser = function(req, res) {
