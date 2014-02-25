@@ -7,9 +7,24 @@ var mongo = require('mongodb'),
     mailClient = require('./mailclient'),
     config = require('./config').config,
     ejs = require('ejs'),
-    fs = require('fs')
+    fs = require('fs'),
+    paypal = require('./paypal')
 
 var db;
+
+exports.authorizePreapproval = function(req, res){
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+
+    console.log('PREAPPROVAL AUTHORIZED: ' + query.date_id);
+    // update transaction in mongodb by approvalId and set status to 'approved'
+    // if update successful, create date and return to home
+
+    // look up transaction by date_id, set status to 'authorized'
+
+
+    res.end(query.date_id);
+};
 
 exports.connect = function(){
 
@@ -130,25 +145,32 @@ exports.addDate = function(req, res){
 
     var ids = req.body.ids;
     var date = req.body.date;
+    var requiresAuth = req.body.hasPayment;
+
     date.created = moment().utc().format();
     date.acceptedCount = parseInt(date.acceptedCount);
 
     db.collection('dates', function(err, datesCollection){
 
+
         datesCollection.insert(date, {safe: true}, function(err, result){
 
             if(!err){
+
+                console.log(result);
+                res.end(JSON.stringify(result[0]));
+
                 db.collection('users', function(err, userCollection) {
                     userCollection.update({ _id : { $in : ids } },{ $addToSet: { dates: result[0]._id }},{ multi: true }, function(err, result){
                         if(err){
                             console.log('Error adding date to user: ' + err);
                         } else {
 
-                            res.end('success');
+                            //res.end('success');
 
                             fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
                                 if(!err) {
-                                    mailClient.sendDateProposalEmail(date, html);
+                                    //mailClient.sendDateProposalEmail(date, html);
                                 } else {
                                     console.log(err);
                                 }
@@ -158,6 +180,7 @@ exports.addDate = function(req, res){
                 });
             }else{
                 console.log('Error adding new date: ' + err);
+                res.end('404');
             }
         });
     });

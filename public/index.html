@@ -103,32 +103,15 @@
         <form data-bind="submit: addProposal">
           <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
           <input class="lg-input date-picker" type="date" data-bind="value: time" />
+          <select id="time-values" data-bind="value: hour">
+            <option>6am</option><option>7am</option><option>8am</option><option>9am</option><option>10am</option><option>11am</option><option>12pm</option><option>1pm</option><option>2pm</option><option>3pm</option><option>4pm</option><option>5pm</option><option>6pm</option><option>7pm</option><option>8pm</option><option>9pm</option><option>10pm</option><option>11pm</option>
+          </select>
           <textarea id="message-area" data-bind="value: message"></textarea>
           <div class="clearfix">
-            <div class="payment-option clearfix selected-amount">
-              <div class="payment-icon">
-                <img src="img/heart.png" />
-              </div>
-              <div class="payment-amount">$0</div>
-            </div>
-            <div class="payment-option clearfix">
-              <div class="payment-icon">
-                <img src="img/coffee.png" />
-              </div>
-              <div class="payment-amount">$5</div>
-            </div>
-            <div class="payment-option clearfix">
-              <div class="payment-icon">
-                <img src="img/drink.png" />
-              </div>
-              <div class="payment-amount">$15</div>
-            </div>
-            <div class="payment-option clearfix">
-              <div class="payment-icon">
-                <img src="img/meal.png" />
-              </div>
-              <div class="payment-amount">$30</div>
-            </div>
+            <div class="payment-option selected-amount" id="free" data-bind="click: doPreapproval">$0</div>
+            <div class="payment-option" id="coffee" data-bind="click: doPreapproval">$5</div>
+            <div class="payment-option" id="drink" data-bind="click: doPreapproval">$15</div>
+            <div class="payment-option" id="meal" data-bind="click: doPreapproval">$30</div>
           </div>
           <button id="submit-proposal" class="std-btn orange" type="submit">Submit</button>
         </form>

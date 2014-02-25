@@ -1,16 +1,10 @@
 var http = require('https'),
-	url = require('url')
+	url = require('url'),
+	config = require('./config').devPaypalConfig
 
-var sandbox_paypal_endpoint = "svcs.sandbox.paypal.com";
 var DEFAULT_PORT = 443;
 var DEFAULT_METHOD= 'POST';
 
-var sandbox_api_credentials = {
-	USER : 'buddy_api1.tangleapp.com',
-	PWD : '1393218843',
-	SIGNATURE : 'A66nhHAywlZJ3sI.jJevN-w3VG8TA5yym7Nijw1Auz.pmfHUSxFIbfrT',
-	APPID: "APP-80W284485P519543T"
-};
 
 var cancelPreapproval = function(request, response){
 
@@ -22,7 +16,7 @@ var cancelPreapproval = function(request, response){
 	var errorLang = "en_US";
 
 	var options = {
-	  hostname: sandbox_paypal_endpoint,
+	  hostname: config.ENDPOINT,
 	  port: DEFAULT_PORT,
 	  path: path,
 	  method: DEFAULT_METHOD,
@@ -51,14 +45,14 @@ var cancelPreapproval = function(request, response){
 	  console.log('problem with request: ' + e.message);
 	});
 
-	req.setHeader("X-PAYPAL-SECURITY-USERID", sandbox_api_credentials.USER);
-	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", sandbox_api_credentials.PWD);
-	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", sandbox_api_credentials.SIGNATURE);
+	req.setHeader("X-PAYPAL-SECURITY-USERID", config.USER);
+	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", config.PWD);
+	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", config.SIGNATURE);
 	req.setHeader("X-PAYPAL-REQUEST-DATA-FORMAT", "NV") ;
 	req.setHeader("X-PAYPAL-RESPONSE-DATA-FORMAT", "JSON");
-	req.setHeader("X-PAYPAL-APPLICATION-ID", sandbox_api_credentials.APPID); // SANDBOX APP ID, NEED TO GET OUR OWN
+	req.setHeader("X-PAYPAL-APPLICATION-ID", config.APPID); // SANDBOX APP ID, NEED TO GET OUR OWN
 	
-	var body = "clientDetails.applicationId=APP-80W284485P519543T";
+	var body = "clientDetails.applicationId=" + config.APPID;
 	body += "&requestEnvelope.errorLanguage=" + errorLang;
 	body += "&preapprovalKey=" + preapprovalKey;
 
@@ -72,22 +66,27 @@ var cancelPreapproval = function(request, response){
 
 var preApprove = function(request, response){
 
+	var url_parts = url.parse(request.url, true);
+    var query = url_parts.query;
+    var date_id = query.id;
+    var amount = query.amount;
+
 	var path = "/AdaptivePayments/Preapproval/";
-	var senderEmail = request.body.sender;//"akjurczak@gmail.com";
-	var cancelUrl = "http://trytangle.herokuapp.com/cancel";
-	var returnUrl = "http://localhost:5000/";
+	//var senderEmail = query.sender;//request.body.sender;
+	var cancelUrl = "http://localhost:5000/paypal/preapproval/cancel/?date_id=" + date_id;
+	var returnUrl = "http://localhost:5000/paypal/preapproval/success/?date_id=" + date_id;
 	var currencyCode = "USD";
 	var startingDate = new Date().toISOString();
 	var endingDate = "2014-02-27T20:40:49.510Z";//new Date().toISOString();
-	var maxAmountPerPayment = request.body.amount;//"10.00"; // should be = participant1Total + participant2Total
+	var maxAmountPerPayment = amount;//request.body.amount; // should be = participant1Total + participant2Total
 	var maxNumberOfPayments = 1; // parallel payments count as 1 payment
-	var maxTotalAmountOfAllPayments = request.body.amount; // should be = participant1Total + participant2Total
+	var maxTotalAmountOfAllPayments = amount;//request.body.amount; // should be = participant1Total + participant2Total
 	var pinType = "NOT_REQUIRED";
 	var errorLang = "en_US"; //requestEnvelope.errorLanguage=en_US
 	var displayMaxTotalAmount = "true";
 
 	var options = {
-	  hostname: sandbox_paypal_endpoint,
+	  hostname: config.ENDPOINT,
 	  port: DEFAULT_PORT,
 	  path: path,
 	  method: DEFAULT_METHOD,
@@ -106,9 +105,14 @@ var preApprove = function(request, response){
 
 	  	if(data.responseEnvelope.ack.toLowerCase() === 'success'){
 	  		console.log('Preapproval Key: ' + data.preapprovalKey);
-
+	  		console.log('RETURN URL: ' + returnUrl);
+	  		// store in transaction table { user_id: user_id, date_id = date_id, timestamp: data.responseEnvelope.timestamp, sender: email, pin: "", preapprovalKey: data.preapprovalKey, status: "not-authorized"}
+	  		// specify return address to be /paypal/preapproval/success which will just update record
 	  		// now we can create a PayRequest passing in preapprovalKey and pin (optional)
-			
+
+	  		//TODO: insert Transaction record with date_id
+	  		// then redirect to paypal
+
 	  		response.writeHead(301,
 			  {Location: "https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_ap-preapproval&preapprovalkey=" + data.preapprovalKey}
 			);
@@ -122,15 +126,15 @@ var preApprove = function(request, response){
 	  console.log('problem with request: ' + e.message);
 	});
 
-	req.setHeader("X-PAYPAL-SECURITY-USERID", sandbox_api_credentials.USER);
-	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", sandbox_api_credentials.PWD);
-	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", sandbox_api_credentials.SIGNATURE);
+	req.setHeader("X-PAYPAL-SECURITY-USERID", config.USER);
+	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", config.PWD);
+	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", config.SIGNATURE);
 	req.setHeader("X-PAYPAL-REQUEST-DATA-FORMAT", "NV") ;
 	req.setHeader("X-PAYPAL-RESPONSE-DATA-FORMAT", "JSON");
 	req.setHeader("X-PAYPAL-APPLICATION-ID", "APP-80W284485P519543T"); // SANDBOX APP ID, NEED TO GET OUR OWN
 	
 	var body = "clientDetails.applicationId=APP-80W284485P519543T";
-	body += "&senderEmail=" + senderEmail;
+	//body += "&senderEmail=" + senderEmail;
 	body += "&currencyCode=" + currencyCode;
 	body += "&endingDate=" + endingDate;
 	body += "&startingDate=" + startingDate;
@@ -142,7 +146,7 @@ var preApprove = function(request, response){
 	body += "&returnUrl=" + returnUrl;
 	body += "&cancelUrl=" + cancelUrl;
 	body += "&displayMaxTotalAmount=" + displayMaxTotalAmount;
-	body += "&memo=Only ONE payment will be sent to your friends for their date.";
+	body += "&memo=You are giving a gift of $" + amount + " to be split between your friends for their date. This payment will only be made if both approve the date. Otherwise, you won't be charged.";
 
 	req.setHeader('content-length', body.length);
 
@@ -177,7 +181,7 @@ var payRequest = function(request,response){
 	var errorLang = "en_US"; //requestEnvelope.errorLanguage=en_US
 
 	var options = {
-	  hostname: sandbox_paypal_endpoint,
+	  hostname: config.ENDPOINT,
 	  port: DEFAULT_PORT,
 	  path: path,
 	  method: DEFAULT_METHOD,
@@ -225,9 +229,9 @@ var payRequest = function(request,response){
 	&cancelUrl=
 	*/
 
-	req.setHeader("X-PAYPAL-SECURITY-USERID", sandbox_api_credentials.USER);
-	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", sandbox_api_credentials.PWD);
-	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", sandbox_api_credentials.SIGNATURE);
+	req.setHeader("X-PAYPAL-SECURITY-USERID", config.USER);
+	req.setHeader("X-PAYPAL-SECURITY-PASSWORD", config.PWD);
+	req.setHeader("X-PAYPAL-SECURITY-SIGNATURE", config.SIGNATURE);
 	req.setHeader("X-PAYPAL-REQUEST-DATA-FORMAT", "NV") ;
 	req.setHeader("X-PAYPAL-RESPONSE-DATA-FORMAT", "JSON");
 	req.setHeader("X-PAYPAL-APPLICATION-ID", "APP-80W284485P519543T"); // SANDBOX APP ID, NEED TO GET OUR OWN

@@ -29,7 +29,9 @@ var paypal = require('./paypal');
 
 app.get('/paypal/pay/', paypal.payRequest);
 
-app.post('/paypal/preapprove/', paypal.preApprove);
+app.get('/paypal/preapprove/', paypal.preApprove);
+
+app.get('/paypal/preapproval/success/', mongoClient.authorizePreapproval);
 
 app.get('/paypal/cancel/', paypal.cancelPreapproval);
 
