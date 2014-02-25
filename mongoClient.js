@@ -188,7 +188,7 @@ exports.addDate = function(req, res){
 
                             fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
                                 if(!err) {
-                                    //mailClient.sendDateProposalEmail(date, html);
+                                    mailClient.sendDateProposalEmail(date, html);
                                 } else {
                                     console.log(err);
                                 }
@@ -265,7 +265,7 @@ exports.updateProposedDate = function(req, res){
 
                 fs.readFile(__dirname + '/public/templates/DateEmailTemplate.html', 'utf-8', function(err, html) {
                     if(!err) {
-                        //mailClient.sendDateAcceptedEmail(modified_date, html);
+                        mailClient.sendDateAcceptedEmail(modified_date, html);
                     } else {
                         console.log(err);
                     }
@@ -308,7 +308,7 @@ exports.rejectProposedDate = function(req, res){
     }
 
     db.collection('dates', function(err, collection){
-        
+
         collection.remove({_id: ObjectID(date._id)}, {safe:true}, function(err, result){
 
             if (err) {
