@@ -390,6 +390,26 @@ input {
 	border-radius: 3px;
 	height: 50px;
 	margin-right: 10px;
+	background-position: 10px center;
+	background-repeat: no-repeat;
+	text-indent: 50px;
+	line-height: 50px;
+}
+
+#free {
+	background-image: url('../img/heart.png');
+}
+
+#coffee {
+	background-image: url('../img/coffee.png');
+}
+
+#drink {
+	background-image: url('../img/drink.png');
+}
+
+#meal {
+	background-image: url('../img/meal.png');
 }
 
 .payment-option:nth-child(4) {
@@ -489,8 +509,10 @@ input {
 		width: 180px;
 	}
 
-	.payment-amount {
-		display: none;
+	.payment-option {
+	  text-indent: 100%;
+      white-space: nowrap;
+      overflow: hidden;
 	}
 
 }
@@ -511,8 +533,10 @@ input {
 		width: 180px;
 	}
 
-	.payment-amount {
-		display: none;
+	.payment-option {
+	    text-indent: 100%;
+	    white-space: nowrap;
+	    overflow: hidden;
 	}
 }
 
