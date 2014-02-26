@@ -1,3 +1,5 @@
+require('newrelic');
+
 var express = require("express"),
 	fs = require('fs'),
 	app = express(),
@@ -25,15 +27,15 @@ app.configure(function () {
 	app.engine('html', engines.ejs);
 });
 
-var paypal = require('./paypal');
+// var paypal = require('./paypal');
 
-app.get('/paypal/pay/', paypal.payRequest);
+// app.get('/paypal/pay/', paypal.payRequest);
 
-app.get('/paypal/preapprove/', paypal.preApprove);
+// app.get('/paypal/preapprove/', paypal.preApprove);
 
-app.get('/paypal/preapproval/success/', mongoClient.authorizePreapprovalTransaction);
+// app.get('/paypal/preapproval/success/', mongoClient.authorizePreapprovalTransaction);
 
-app.get('/paypal/cancel/', paypal.cancelPreapproval);
+// app.get('/paypal/cancel/', paypal.cancelPreapproval);
 
 app.get('/user/:id', mongoClient.getById);
 

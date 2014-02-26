@@ -10,7 +10,7 @@ var mailClient = nodemailer.createTransport("SMTP",{
     }
 });
 
-var fromEmail = "tangle <tangle@gmail.com>";
+var fromEmail = "tangle <" + config.EMAIL_USER_NAME + ">";
 
 exports.sendNewUserEmail = function(user, html){
 

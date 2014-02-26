@@ -31,7 +31,6 @@
   }    
 
   if(getCookie('mash_user')){
-    console.log('cookie exists');
     viewModel.isUserLoggedIn(true);
   }
 
@@ -40,8 +39,8 @@ $(function(){
 
   window.fbAsyncInit = function() {
     FB.init({
-      // appId      : '1467905353425793',
-      appId      : '232433826959882',
+      appId      : '1467905353425793',
+      //appId      : '232433826959882',
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -55,7 +54,7 @@ $(function(){
           //   console.log('Good to see you, ' + response.name + '.');
           // });
         } else {
-          console.log('User cancelled login or did not fully authorize.');
+          //console.log('User cancelled login or did not fully authorize.');
         }
       }, {scope: 'email'});
     }
@@ -66,16 +65,16 @@ $(function(){
 
     FB.getLoginStatus(function(response){
       if(response.status === 'connected'){
-        createCookie('mash_user', response.authResponse.accessToken, 1);
-        console.log('getLoginStatus: connected');
+        //createCookie('mash_user', response.authResponse.accessToken, 1);
+        //console.log('getLoginStatus: connected');
       } else if (response.status === 'not_authorized'){
-        console.log('getLoginStatus: not-authorized');
-        console.log('REMOVING COOKIE');
+        //console.log('getLoginStatus: not-authorized');
+        //console.log('REMOVING COOKIE');
         deleteCookie('mash_user');
         viewModel.isUserLoggedIn(false);
       } else {
-        console.log('getLoginStatus: not logged in');
-        console.log('REMOVING COOKIE');
+        //console.log('getLoginStatus: not logged in');
+        //console.log('REMOVING COOKIE');
         deleteCookie('mash_user');
         viewModel.isUserLoggedIn(false);
       }
@@ -154,13 +153,7 @@ $(function(){
     FB.api('/me/friends', function(result) {
 
       var friend_list = result.data;
-      // var photo_hash = {};
 
-      // _.each(friend_list, function(item){
-      //   photo_hash[item.id] = item.picture.data.url;
-      // });
-
-      //var ids = Object.keys(photo_hash);
       var ids = _.map(friend_list, function(f){ return f.id; });
 
       $.post('/friends/', {ids: ids}, function(data){

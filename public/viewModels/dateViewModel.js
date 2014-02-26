@@ -28,23 +28,21 @@ var DateViewModel = function(participants, time, location, message, matchmaker, 
           state: "proposed", // make enum?
           location: self.location(),
           time: '' + self.time + ' ' + self.hour(),
-          // TODO: decide if we need all photo sizes or just one
           participants: _.map(self.participants, function(u){ return { _id: u._id, name: u.name, email: u.email, photo_large: u.photo_large } }),
           matchmaker: { name: self.matchmaker.name, email: self.matchmaker.email }
-        },
-        hasPayment: self.payment > 0
+        }
       },
       function(data){
 
         var newDate = JSON.parse(data);
         console.log(newDate);
 
-        if(self.payment > 0){
-          window.location = "http://localhost:5000/paypal/preapprove/?id=" + newDate._id + "&amount=" + self.payment;
+        //if(self.payment > 0){
+          //window.location = "http://localhost:5000/paypal/preapprove/?id=" + newDate._id + "&amount=" + self.payment;
           // $.get('/paypal/preapprove/?id=' + newDate._id + '&amount=' + self.payment, function(response){
           //   console.log(response);
           // });
-        }
+        //}
       }
     );
     if (self.payment === 0) {

@@ -61,30 +61,10 @@ exports.connect = function(){
     });
 };
 
-exports.close = function(){
+exports.close = function() {
+    
     mailClient.close();
 };
-
-exports.email = function(req, res){
-    // res.render('newdateproposalemailtemplate.html', {title: 'tangle', name: "buddy chell"}, function(err, html){
-    //     if(err) {
-    //         console.log(err);
-    //         res.end('404');
-    //     } else {
-    //         res.end(html);
-    //     }
-    // });
-    
-    fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
-        if(!err) {
-            mailClient.sendDateProposalEmail(date, html);
-        } else {
-            console.log(err);
-        }
-    });
-
-    res.end('');
-}
 
 exports.getById = function(req, res) {
 
@@ -163,13 +143,11 @@ exports.addDate = function(req, res){
 
     var ids = req.body.ids;
     var date = req.body.date;
-    var requiresAuth = req.body.hasPayment;
 
     date.created = moment().utc().format();
     date.acceptedCount = parseInt(date.acceptedCount);
 
     db.collection('dates', function(err, datesCollection){
-
 
         datesCollection.insert(date, {safe: true}, function(err, result){
 
@@ -179,12 +157,11 @@ exports.addDate = function(req, res){
                 res.end(JSON.stringify(result[0]));
 
                 db.collection('users', function(err, userCollection) {
+
                     userCollection.update({ _id : { $in : ids } },{ $addToSet: { dates: result[0]._id }},{ multi: true }, function(err, result){
                         if(err){
                             console.log('Error adding date to user: ' + err);
                         } else {
-
-                            //res.end('success');
 
                             fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
                                 if(!err) {
@@ -218,6 +195,7 @@ exports.updateProposedDate = function(req, res){
         } else{
 
             modified_date = date;
+            
             // remove from user and end response
             db.collection('users', function(err, usersCollection){
 
@@ -240,19 +218,19 @@ exports.updateProposedDate = function(req, res){
                 // maybe log somewhere?
 
                 // if there is an amount on the date (or entry in transactions table)
-                if(modified_date.approval_transaction_id){
-                    console.log("APPROVAL TRANSACTION ID: " + modified_date.approval_transaction_id);
+                // if(modified_date.approval_transaction_id){
+                //     console.log("APPROVAL TRANSACTION ID: " + modified_date.approval_transaction_id);
 
-                    db.collection('transactions', function(err, collection) {
+                //     db.collection('transactions', function(err, collection) {
 
-                        collection.findOne({'_id': modified_date.approval_transaction_id, 'is_approved': true}, function(err, item) {
-                            console.log('FOUND TRANSACTION TO RUN');
+                //         collection.findOne({'_id': modified_date.approval_transaction_id, 'is_approved': true}, function(err, item) {
+                //             console.log('FOUND TRANSACTION TO RUN');
 
-                            paypal.sendPayments(item.paypal_approval_id, item.amount, modified_date.matchmaker.email, modified_date.participants[0].email, modified_date.participants[1].email);
+                //             paypal.sendPayments(item.paypal_approval_id, item.amount, modified_date.matchmaker.email, modified_date.participants[0].email, modified_date.participants[1].email);
 
-                        });
-                    });
-                }
+                //         });
+                //     });
+                // }
 
                 db.collection('dates').remove({_id: modified_date._id}, {safe:true}, function(err, result){
                     if(err){
@@ -279,6 +257,7 @@ exports.updateProposedDate = function(req, res){
 }
 
 exports.deleteDate = function(req, res){
+    
     res.end('');
 }
 
@@ -300,7 +279,7 @@ exports.rejectProposedDate = function(req, res){
         // send rejection email
         fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
             if(!err) {
-                //mailClient.sendRejectionEmail(date, rejectee, rejector, html);
+                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
             } else {
                 console.log('Error sending rejection email: ' + err);
             }
@@ -317,19 +296,19 @@ exports.rejectProposedDate = function(req, res){
             } else {
                 console.log('' + result + ' date deleted');
 
-                if(date.approval_transaction_id){
-                    // remove transaction
-                    // cancel preapproval
-                    db.collection('transactions', function(err, collection) {
+                // if(date.approval_transaction_id){
+                //     // remove transaction
+                //     // cancel preapproval
+                //     db.collection('transactions', function(err, collection) {
 
-                        collection.findAndModify({'_id': modified_date.approval_transaction_id },{safe: true, remove: true}, function(err, item) {
-                            console.log('FOUND TRANSACTION TO CANCEL');
+                //         collection.findAndModify({'_id': modified_date.approval_transaction_id },{safe: true, remove: true}, function(err, item) {
+                //             console.log('FOUND TRANSACTION TO CANCEL');
 
-                            paypal.cancelPreapproval(item.paypal_approval_id);
+                //             paypal.cancelPreapproval(item.paypal_approval_id);
 
-                        });
-                    });
-                }
+                //         });
+                //     });
+                // }
 
                 // remove date from both participants
                 db.collection('users', function(err, usersCollection){
@@ -390,7 +369,6 @@ exports.addUser = function(req, res) {
             }
         });
     });
-
 };
  
 exports.updateUser = function(req, res) {
@@ -416,7 +394,6 @@ exports.updateUser = function(req, res) {
             }
         });
     });
-
 };
  
 exports.deleteUser = function(req, res) {
@@ -440,7 +417,6 @@ exports.deleteUser = function(req, res) {
             }
         });
     });
-
 };
 
 exports.addTransaction = function(date_id, approval_id, timestamp, amount){
@@ -477,7 +453,3 @@ exports.addTransaction = function(date_id, approval_id, timestamp, amount){
         });
     });
 }
-
-
-//exports.MongoClient = MongoClient;
-
