@@ -40,7 +40,11 @@ $(function(){
   window.fbAsyncInit = function() {
     FB.init({
       appId      : '1467905353425793',
+<<<<<<< HEAD
       //appId      : '232433826959882',
+=======
+      // appId      : '232433826959882',
+>>>>>>> 535a64484d8e1d2ac1382a76a6e025e6cafdb7aa
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
