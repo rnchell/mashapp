@@ -25,7 +25,6 @@ var friendsViewModel = function(){
 
         var proposalUI = new DateViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), null, null, userViewModel.user, 0, 'Proposed');
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
-        loadScript();
         self.dateHolder = [];
      }
   };
