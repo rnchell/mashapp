@@ -23,8 +23,9 @@ var friendsViewModel = function(){
           return 0;
         });
 
-        var proposalUI = new DateViewModel(self.dateHolder, moment({hour: 19}).day(2).format("dddd, MMMM Do YYYY, h:mm:ss a"), null, null, userViewModel.user, 0, 'Proposed');
+        var proposalUI = new DateViewModel(self.dateHolder, moment().format("ddd, MMM D"), null, null, userViewModel.user, 0, 'Proposed');
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
+        $( "#datepicker" ).datepicker({ dateFormat: "D, MM d"});
         self.dateHolder = [];
      }
   };

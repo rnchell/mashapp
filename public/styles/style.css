@@ -364,7 +364,25 @@ input {
 }
 
 .time {
-	width: 50%;
+   width: calc(50% - 20px);
+   height: 42px;
+   margin-top:2px;
+   overflow: hidden;
+   background-color: white;
+    border: 1px solid #cfcac9;
+  	border-radius: 3px;
+   float: right;
+}
+
+.time select {
+	background: transparent;
+	width: 100%;
+	padding: 10px;
+	font-size: 16px;
+	line-height: 1;
+	border: none;
+	height: 42px;
+	-webkit-appearance: none;
 }
 
 .title {

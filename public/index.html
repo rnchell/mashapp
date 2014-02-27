@@ -4,6 +4,8 @@
   <title>tingle - Hook up your friends</title>
   <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400' rel='stylesheet' type='text/css'>
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
   <script src="/lib/underscore.js"></script>
   <script src="lib/knockout.js"></script>
   <script src="viewModels/viewModel.js"></script>
@@ -103,10 +105,13 @@
       <div class="date-container add-bottom">
         <form data-bind="submit: addProposal">
           <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
-          <input class="lg-input date-picker" type="date" data-bind="value: time" />
-          <select id="time-values" data-bind="value: hour">
-            <option>6am</option><option>7am</option><option>8am</option><option>9am</option><option>10am</option><option>11am</option><option>12pm</option><option>1pm</option><option>2pm</option><option>3pm</option><option>4pm</option><option>5pm</option><option>6pm</option><option>7pm</option><option>8pm</option><option>9pm</option><option>10pm</option><option>11pm</option>
-          </select>
+          <!--<input class="lg-input date-picker" type="date" data-bind="value: time" />-->
+          <input class="lg-input date-picker" type="text" id="datepicker" data-bind="value: time" />
+          <div class="time">
+            <select id="time select" data-bind="value: hour">
+              <option>6am</option><option>7am</option><option>8am</option><option>9am</option><option>10am</option><option>11am</option><option>12pm</option><option>1pm</option><option>2pm</option><option>3pm</option><option>4pm</option><option>5pm</option><option>6pm</option><option>7pm</option><option>8pm</option><option>9pm</option><option>10pm</option><option>11pm</option>
+            </select>
+          </div>
           <textarea id="message-area" data-bind="value: message"></textarea>
           <!--<div class="clearfix">
             <div class="payment-option selected-amount" id="free" data-bind="click: doPreapproval">$0</div>
