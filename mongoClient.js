@@ -120,6 +120,10 @@ exports.getDates = function(req, res){
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
 
+    // TODO: check for empty ids coming in
+    // if(!query.ids || query.ids === '' || query.ids.length === 0)
+    //     res.send({});
+
     var date_ids = [];
 
     if(!Array.isArray(query.ids)){

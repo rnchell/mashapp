@@ -35,6 +35,11 @@ var UserViewModel = function(user){
     });
   };
   self.getDates = function (callback) {
+
+    // redirect to dates page with a friendly message?
+    if(self.dates().length === 0)
+      return;
+
 		$.get('/dates/?ids=' + self.dates().join('&ids='), function (data) {
       self.datesHolder(data);
       callback();
