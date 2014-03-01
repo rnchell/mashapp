@@ -5,7 +5,6 @@ var friendsViewModel = function(){
   self.dateHolder = [];
 
   self.match = function(user, event){
-    console.log(self.dateHolder.length);
     if (self.dateHolder.length === 0) {
       self.dateHolder.push(user);
      } else if (self.dateHolder[0] === user){

@@ -22,7 +22,7 @@ var UserViewModel = function(user){
     self.user.status = self.status();
 
     $.post('/user/update/', user, function(data){
-      console.log(data)
+      //console.log(data)
   	});
   };
   self.delete = function () {
@@ -30,7 +30,7 @@ var UserViewModel = function(user){
 	    url: '/user/delete/' + self.user._id,
 	    type: 'DELETE',
 	    success: function(result) {
-	      console.log("removed " + result)
+	      //console.log("removed " + result)
 	    }
     });
   };

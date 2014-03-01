@@ -14,6 +14,9 @@ var fromEmail = "tangle <" + config.EMAIL_USER_NAME + ">";
 
 exports.sendNewUserEmail = function(user, html){
 
+    if(!config.EMAIL_ENABLED)
+        return;
+
     var mailOptions = {
         from: fromEmail,
         to: user.email,
@@ -25,6 +28,7 @@ exports.sendNewUserEmail = function(user, html){
     mailClient.sendMail(mailOptions, function(error, response){
         if(error){
          console.log(error);
+         sendErrorEmail('Error sending new user email: ' + error);
         }else{
          console.log("Message sent: " + response.message);
         }
@@ -32,6 +36,9 @@ exports.sendNewUserEmail = function(user, html){
 }
 
 exports.sendDateProposalEmail = function(date, template){
+
+    if(!config.EMAIL_ENABLED)
+        return;
 
     for(var i=0; i < date.participants.length; i++){
         
@@ -50,17 +57,19 @@ exports.sendDateProposalEmail = function(date, template){
         
         mailClient.sendMail(mailOptions, function(error, response){
             if(error){
-                // log and send techops email
                 console.log('Error sending new Date Proposal: ' + error);
+                sendErrorEmail('Error sending new Date Proposal: ' + error);
             } else{
                 console.log('Message sent: ' + response.message);
             }
         });
     }
-
 }
 
 exports.sendRejectionEmail = function(date, rejectee, rejector, template){
+
+    if(!config.EMAIL_ENABLED)
+        return;
 
     var mailOptions = {
         from: fromEmail,
@@ -74,8 +83,8 @@ exports.sendRejectionEmail = function(date, rejectee, rejector, template){
     
     mailClient.sendMail(mailOptions, function(error, response){
         if(error){
-            // log and send techops email
             console.log('Error sending rejection email: ' + error);
+            sendErrorEmail('Error sending rejection email: ' + error)
         } else{
             console.log('Message sent: ' + response.message);
         }
@@ -84,6 +93,9 @@ exports.sendRejectionEmail = function(date, rejectee, rejector, template){
 
 exports.sendDateAcceptedEmail = function(date, template){
 
+    if(!config.EMAIL_ENABLED)
+        return;
+    
     var mailOptions = {
         from: fromEmail,
         to: date.participants[0].email + ', ' + date.participants[1].email + ', ' + date.matchmaker.email,
@@ -95,12 +107,25 @@ exports.sendDateAcceptedEmail = function(date, template){
     console.log('Sending DateAcceptedEmail: ' + JSON.stringify(mailOptions));
     mailClient.sendMail(mailOptions, function(error, response){
         if(error){
-            // log and send techops email
             console.log('Error sending date accepted email: ' + error);
+            sendErrorEmail('Error sending date accepted email: ' + error);
         } else{
             console.log('Message sent: ' + response.message);
         }
     });
 }
 
-exports.mailClient = mailClient;
+var sendErrorEmail = function(msg){
+
+    var mailOptions = {
+        from: fromEmail,
+        to: config.TECH_OPS,
+        subject: "Error on tangle",
+        text: msg,
+        html: "<h2>" + msg + "</h2>"
+    };
+
+    mailClient.sendMail(mailOptions, function(error, response){});
+}
+
+exports.sendErrorEmail = sendErrorEmail;
