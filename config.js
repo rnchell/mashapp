@@ -1,7 +1,9 @@
 exports.config = {
 	DATABASE_URI: "mongodb://devuser:powerglove@ds033459.mongolab.com:33459/mashdev",
 	EMAIL_USER_NAME: 'founders@trytangle.com',
-	EMAIL_PASSWORD: 'thewizard'
+	EMAIL_PASSWORD: 'thewizard',
+	TECH_OPS: 'rnchell@gmail.com',
+	EMAIL_ENABLED: false
 };
 
 exports.devPaypalConfig = {

@@ -12,6 +12,12 @@ var mongo = require('mongodb'),
 
 var db;
 
+var USERS_GET_BY_ID_ERROR_MSG = "Error in Users GetById";
+var USERS_GET_ALL_ERROR_MSG = "Error in Users GetAll";
+var USERS_GET_FRIENDS_ERROR_MSG = "Error in Users GetFriends";
+var USERS_GET_DATES_ERROR_MSG = "Error in Users GetDates";
+var USERS_ADD_DATE_ERROR_MSG = "Error in Users AddDate";
+
 exports.authorizePreapprovalTransaction = function(req, res){
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
@@ -56,6 +62,7 @@ exports.connect = function(){
         db = mdb;
       } else{
         console.log('error connecting to mongodb: ' + err);
+        mailClient.sendErrorEmail('Error connecting to mongodb: ' + err);
       }
 
     });
@@ -74,11 +81,35 @@ exports.getById = function(req, res) {
 
     db.collection('users', function(err, collection) {
 
-        collection.findOne({'_id': id}, function(err, item) {
+        if(err){
 
-            res.send(item);
+            var errorDetails = {
+                request: req,
+                response: res,
+                error: err
+            };
 
-        });
+            mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+            res.send(500);
+        } else {
+            collection.findOne({'_id': id}, function(err, item) {
+
+                if(err) {
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                } else {
+                    res.send(item);
+                }
+            });
+        }
     });
 };
  
@@ -89,30 +120,72 @@ exports.getAll = function(req, res) {
 
     db.collection('users', function(err, collection) {
 
-        collection.find().toArray(function(err, items) {
+        if(err){
+            var errorDetails = {
+                request: req,
+                response: res,
+                error: err
+            };
 
-            res.send(items);
+            mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
 
-        });
+            res.send(500);
+        } else {
+            collection.find().toArray(function(err, items) {
+
+                if(err){
+
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                } else {
+                    res.send(items);
+                }
+                
+            });
+        }
     });
 };
 
 exports.getFriends = function(req, res){
-    //var url_parts = url.parse(req.url, true);
-    //var query = url_parts.query;
+
     var ids = req.body.ids;
 
     db.collection('users', function(err, collection){
 
-        collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
+        if(!err){
 
-            if(err){
-                console.log('Error getting user friends: ' + err);
-            } else {
-                res.send(items.clean(null));
-            }
+            collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
 
-        });
+                if(!err){
+                    res.send(items.clean(null));
+                } else {
+                    console.log('Error getting user friends: ' + err);
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                }
+
+            });
+
+        } else {
+
+            mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + err);
+
+            res.send(500);
+        }
     });
 }
 
@@ -120,9 +193,9 @@ exports.getDates = function(req, res){
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
 
-    // TODO: check for empty ids coming in
-    // if(!query.ids || query.ids === '' || query.ids.length === 0)
-    //     res.send({});
+    if(!query.ids){
+        res.send(400);
+    }
 
     var date_ids = [];
 
@@ -136,14 +209,24 @@ exports.getDates = function(req, res){
 
     db.collection('dates', function(err, collection){
 
-        collection.find({ _id : { $in : date_ids } }).toArray(function(err, dates){
-            res.send(dates);
-        });
+        if (!err) {
+            collection.find({ _id : { $in : date_ids } }).toArray(function(err, dates){
+                
+                if(!err) {
+                    res.send(dates);
+                } else {
+                    mailClient.sendErrorEmail(USERS_GET_DATES_ERROR_MSG + ': ' + err);
+                    res.send(500);
+                }
+            });
+        } else {
+            mailClient.sendErrorEmail(USERS_GET_DATES_ERROR_MSG + ': ' + err);
+            res.send(500);
+        }
     });
 }
 
 exports.addDate = function(req, res){
-    console.log('Adding dates to users.');
 
     var ids = req.body.ids;
     var date = req.body.date;
@@ -153,35 +236,25 @@ exports.addDate = function(req, res){
 
     db.collection('dates', function(err, datesCollection){
 
-        datesCollection.insert(date, {safe: true}, function(err, result){
+        if(!err){
 
-            if(!err){
+            datesCollection.insert(date, {safe: true}, function(err, result){
 
-                console.log(result);
-                res.end(JSON.stringify(result[0]));
+                if(!err){
 
-                db.collection('users', function(err, userCollection) {
+                    res.end(JSON.stringify(result[0]));
 
-                    userCollection.update({ _id : { $in : ids } },{ $addToSet: { dates: result[0]._id }},{ multi: true }, function(err, result){
-                        if(err){
-                            console.log('Error adding date to user: ' + err);
-                        } else {
+                    addDateToUsers(ids, result[0]);
+                }else{
+                    console.log('Error adding new date: ' + err);
+                    mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+                    res.end(500);
+                }
+            });
+        } else {
 
-                            fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
-                                if(!err) {
-                                    mailClient.sendDateProposalEmail(date, html);
-                                } else {
-                                    console.log(err);
-                                }
-                            });
-                        }
-                    });
-                });
-            }else{
-                console.log('Error adding new date: ' + err);
-                res.end('404');
-            }
-        });
+            mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+        }
     });
 };
 
@@ -193,6 +266,7 @@ exports.updateProposedDate = function(req, res){
     var modified_date;
 
     db.collection('dates').findAndModify({_id: ObjectID(date_id)}, [['_id','asc']], {$inc: { acceptedCount: 1}}, {new: true, safe: true}, function(err, date) {
+        
         if (err) {
             console.warn(err.message);
             res.end(err.message);
@@ -399,7 +473,33 @@ exports.updateUser = function(req, res) {
         });
     });
 };
- 
+
+var addDateToUsers = function(user_ids, date) {
+
+    console.log('adding date to users: ' + JSON.stringify(date));
+
+    db.collection('users', function(err, userCollection) {
+
+        userCollection.update({ _id : { $in : user_ids } },{ $addToSet: { dates: ObjectID(date._id.toString()) }},{ multi: true }, function(err, result){
+            
+            if(err){
+                console.log('Error adding date to user: ' + err);
+                mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+            } else {
+
+                fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
+                    if(!err) {
+                        mailClient.sendDateProposalEmail(date, html);
+                    } else {
+                        console.log(err);
+                        mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+                    }
+                });
+            }
+        });
+    });
+}
+
 exports.deleteUser = function(req, res) {
 
     var id = req.params.id;
