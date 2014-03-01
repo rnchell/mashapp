@@ -18,6 +18,138 @@ var USERS_GET_FRIENDS_ERROR_MSG = "Error in Users GetFriends";
 var USERS_GET_DATES_ERROR_MSG = "Error in Users GetDates";
 var USERS_ADD_DATE_ERROR_MSG = "Error in Users AddDate";
 
+exports.addDate = function(req, res){
+
+    var ids = req.body.ids;
+    var date = req.body.date;
+
+    date.created = moment().utc().format();
+    date.acceptedCount = parseInt(date.acceptedCount);
+
+    db.collection('dates', function(err, datesCollection){
+
+        if(!err){
+
+            datesCollection.insert(date, {safe: true}, function(err, result){
+
+                if(!err){
+
+                    res.end(JSON.stringify(result[0]));
+
+                    addDateToUsers(ids, result[0]);
+                }else{
+                    console.log('Error adding new date: ' + err);
+                    mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+                    res.end(500);
+                }
+            });
+        } else {
+
+            mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+        }
+    });
+}
+
+var addDateToUsers = function(user_ids, date) {
+
+    console.log('adding date to users: ' + JSON.stringify(date));
+
+    db.collection('users', function(err, userCollection) {
+
+        userCollection.update({ _id : { $in : user_ids } },{ $addToSet: { dates: ObjectID(date._id.toString()) }},{ multi: true }, function(err, result){
+            
+            if(err){
+                console.log('Error adding date to user: ' + err);
+                mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+            } else {
+
+                fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
+                    if(!err) {
+                        mailClient.sendDateProposalEmail(date, html);
+                    } else {
+                        console.log(err);
+                        mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+                    }
+                });
+            }
+        });
+    });
+}
+
+exports.addTransaction = function(date_id, approval_id, timestamp, amount){
+
+    var transaction = {
+        date_id: date_id,
+        paypal_approval_id: approval_id,
+        paypal_timestamp: timestamp, 
+        is_approved: false,
+        amount: parseFloat(amount)
+    };
+
+    db.collection('transactions', function(err, collection) {
+
+        collection.insert(transaction, {safe:true}, function(err, result) {
+
+            if (err) {
+                // should send email w details
+                console.log({'error':'An error has occurred adding a transaction for: ' + JSON.stringify(transaction)});
+            } else {
+                console.log('Success: ' + JSON.stringify(result[0]));
+
+                db.collection('dates', function(err, datesCollection){
+
+                    datesCollection.update({_id: ObjectID(date_id) }, { $set: { approval_transaction_id: result[0]._id }}, function(err, dateResult){
+                        if(err){
+                            console.log('error updating date transaction field: ' + err);
+                        } else {
+                            console.log(dateResult);
+                        }
+                    });
+                });
+            }
+        });
+    });
+}
+
+exports.addUser = function(req, res) {
+
+    var user = { 
+        _id: req.body._id, 
+        name: req.body.name, 
+        email: req.body.email,
+        photo_small: req.body.photo_small,
+        photo_normal: req.body.photo_normal,
+        photo_large: req.body.photo_large,
+        dates: [],
+        status: 'single'
+    };
+
+    console.log('Adding user: ' + JSON.stringify(user));
+
+    db.collection('users', function(err, collection) {
+
+        collection.insert(user, {safe:true}, function(err, result) {
+
+            if (err) {
+                res.send({'error':'An error has occurred'});
+            } else {
+                console.log('Success: ' + JSON.stringify(result[0]));
+                res.send(result[0]);
+
+                // send new user email
+                res.render('NewUserEmailTemplate.html', {title: 'tangle', name: user.name }, function(err, html){
+                    if(err) {
+                        // need to send to techops
+                        console.log("Error sending new user email: " + err);
+                    } else {
+                        mailClient.sendNewUserEmail(user, html);
+                    }
+                });
+            }
+        });
+    });
+}
+
 exports.authorizePreapprovalTransaction = function(req, res){
     var url_parts = url.parse(req.url, true);
     var query = url_parts.query;
@@ -49,7 +181,12 @@ exports.authorizePreapprovalTransaction = function(req, res){
     );
 
     res.end('');
-};
+}
+
+exports.close = function() {
+    
+    mailClient.close();
+}
 
 exports.connect = function(){
 
@@ -66,12 +203,72 @@ exports.connect = function(){
       }
 
     });
-};
+}
 
-exports.close = function() {
+exports.deleteDate = function(req, res){
     
-    mailClient.close();
-};
+    res.end('');
+}
+
+exports.deleteUser = function(req, res) {
+
+    var id = req.params.id;
+
+    console.log('Deleting user: ' + id);
+
+    db.collection('users', function(err, collection) {
+
+        collection.remove({'_id': id}, {safe:true}, function(err, result) {
+
+            if (err) {
+                res.send({'error':'An error has occurred - ' + err});
+
+            } else {
+                console.log('' + result + ' user deleted');
+
+                res.send(req.body);
+
+            }
+        });
+    });
+}
+
+exports.getAll = function(req, res) {
+
+    db.collection('users', function(err, collection) {
+
+        if(err){
+            var errorDetails = {
+                request: req,
+                response: res,
+                error: err
+            };
+
+            mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+            res.send(500);
+        } else {
+            collection.find().toArray(function(err, items) {
+
+                if(err){
+
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                } else {
+                    res.send(items);
+                }
+                
+            });
+        }
+    });
+}
 
 exports.getById = function(req, res) {
 
@@ -109,82 +306,6 @@ exports.getById = function(req, res) {
                     res.send(item);
                 }
             });
-        }
-    });
-};
- 
-exports.getByIds = function(req, res){
-};
-
-exports.getAll = function(req, res) {
-
-    db.collection('users', function(err, collection) {
-
-        if(err){
-            var errorDetails = {
-                request: req,
-                response: res,
-                error: err
-            };
-
-            mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
-
-            res.send(500);
-        } else {
-            collection.find().toArray(function(err, items) {
-
-                if(err){
-
-                    var errorDetails = {
-                        request: req,
-                        response: res,
-                        error: err
-                    };
-
-                    mailClient.sendErrorEmail(USERS_GET_ALL_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
-
-                    res.send(500);
-                } else {
-                    res.send(items);
-                }
-                
-            });
-        }
-    });
-};
-
-exports.getFriends = function(req, res){
-
-    var ids = req.body.ids;
-
-    db.collection('users', function(err, collection){
-
-        if(!err){
-
-            collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
-
-                if(!err){
-                    res.send(items.clean(null));
-                } else {
-                    console.log('Error getting user friends: ' + err);
-                    var errorDetails = {
-                        request: req,
-                        response: res,
-                        error: err
-                    };
-
-                    mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
-
-                    res.send(500);
-                }
-
-            });
-
-        } else {
-
-            mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + err);
-
-            res.send(500);
         }
     });
 }
@@ -226,37 +347,112 @@ exports.getDates = function(req, res){
     });
 }
 
-exports.addDate = function(req, res){
+exports.getFriends = function(req, res){
 
     var ids = req.body.ids;
-    var date = req.body.date;
 
-    date.created = moment().utc().format();
-    date.acceptedCount = parseInt(date.acceptedCount);
-
-    db.collection('dates', function(err, datesCollection){
+    db.collection('users', function(err, collection){
 
         if(!err){
 
-            datesCollection.insert(date, {safe: true}, function(err, result){
+            collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
 
                 if(!err){
+                    res.send(items.clean(null));
+                } else {
+                    console.log('Error getting user friends: ' + err);
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
 
-                    res.end(JSON.stringify(result[0]));
+                    mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
 
-                    addDateToUsers(ids, result[0]);
-                }else{
-                    console.log('Error adding new date: ' + err);
-                    mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
-                    res.end(500);
+                    res.send(500);
                 }
+
             });
+
         } else {
 
-            mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
+            mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + err);
+
+            res.send(500);
         }
     });
-};
+}
+
+exports.rejectProposedDate = function(req, res){
+    
+    console.log('Rejecting proposed date');
+
+    var user_id = req.body.id;
+    var date = req.body.date;
+
+    console.log('Rejecting: ' + JSON.stringify(date));
+
+    var rejectee = _.find(date.participants, function(u){ return u._id != user_id; });
+    var rejector = _.find(date.participants, function(u){ return u._id == user_id; });
+
+    var ids = _.map(date.participants, function(u){ return u._id;});
+
+    if(date.acceptedCount == 1){
+        // send rejection email
+        fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
+            if(!err) {
+                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
+            } else {
+                console.log('Error sending rejection email: ' + err);
+            }
+        });
+    }
+
+    db.collection('dates', function(err, collection){
+
+        collection.remove({_id: ObjectID(date._id)}, {safe:true}, function(err, result){
+
+            if (err) {
+                res.send({'error':'An error has occurred - ' + err});
+
+            } else {
+                console.log('' + result + ' date deleted');
+
+                // if(date.approval_transaction_id){
+                //     // remove transaction
+                //     // cancel preapproval
+                //     db.collection('transactions', function(err, collection) {
+
+                //         collection.findAndModify({'_id': modified_date.approval_transaction_id },{safe: true, remove: true}, function(err, item) {
+                //             console.log('FOUND TRANSACTION TO CANCEL');
+
+                //             paypal.cancelPreapproval(item.paypal_approval_id);
+
+                //         });
+                //     });
+                // }
+
+                // remove date from both participants
+                db.collection('users', function(err, usersCollection){
+
+                    usersCollection.update({ _id : { $in : ids } },{ $pull: { dates: ObjectID(date._id) }},{ multi: true }, function(err, result){
+
+                        if (err) {
+                            console.log('Error removing dates from user: ' + err);
+
+                            res.end(err);
+                        } else {
+                            console.log('' + result + ' document(s) updated');
+                            res.end('success');
+                        }
+
+                    });
+                });
+            }
+
+        });
+    });
+}
 
 exports.updateProposedDate = function(req, res){
 
@@ -333,121 +529,6 @@ exports.updateProposedDate = function(req, res){
         } 
     });
 }
-
-exports.deleteDate = function(req, res){
-    
-    res.end('');
-}
-
-exports.rejectProposedDate = function(req, res){
-    
-    console.log('Rejecting proposed date');
-
-    var user_id = req.body.id;
-    var date = req.body.date;
-
-    console.log('Rejecting: ' + JSON.stringify(date));
-
-    var rejectee = _.find(date.participants, function(u){ return u._id != user_id; });
-    var rejector = _.find(date.participants, function(u){ return u._id == user_id; });
-
-    var ids = _.map(date.participants, function(u){ return u._id;});
-
-    if(date.acceptedCount == 1){
-        // send rejection email
-        fs.readFile(__dirname + '/public/templates/RejectionEmailTemplate.html', 'utf-8', function(err, html) {
-            if(!err) {
-                mailClient.sendRejectionEmail(date, rejectee, rejector, html);
-            } else {
-                console.log('Error sending rejection email: ' + err);
-            }
-        });
-    }
-
-    db.collection('dates', function(err, collection){
-
-        collection.remove({_id: ObjectID(date._id)}, {safe:true}, function(err, result){
-
-            if (err) {
-                res.send({'error':'An error has occurred - ' + err});
-
-            } else {
-                console.log('' + result + ' date deleted');
-
-                // if(date.approval_transaction_id){
-                //     // remove transaction
-                //     // cancel preapproval
-                //     db.collection('transactions', function(err, collection) {
-
-                //         collection.findAndModify({'_id': modified_date.approval_transaction_id },{safe: true, remove: true}, function(err, item) {
-                //             console.log('FOUND TRANSACTION TO CANCEL');
-
-                //             paypal.cancelPreapproval(item.paypal_approval_id);
-
-                //         });
-                //     });
-                // }
-
-                // remove date from both participants
-                db.collection('users', function(err, usersCollection){
-
-                    usersCollection.update({ _id : { $in : ids } },{ $pull: { dates: ObjectID(date._id) }},{ multi: true }, function(err, result){
-
-                        if (err) {
-                            console.log('Error removing dates from user: ' + err);
-
-                            res.end(err);
-                        } else {
-                            console.log('' + result + ' document(s) updated');
-                            res.end('success');
-                        }
-
-                    });
-                });
-            }
-
-        });
-    });
-}
-
-exports.addUser = function(req, res) {
-
-    var user = { 
-        _id: req.body._id, 
-        name: req.body.name, 
-        email: req.body.email,
-        photo_small: req.body.photo_small,
-        photo_normal: req.body.photo_normal,
-        photo_large: req.body.photo_large,
-        dates: [],
-        status: 'single'
-    };
-
-    console.log('Adding user: ' + JSON.stringify(user));
-
-    db.collection('users', function(err, collection) {
-
-        collection.insert(user, {safe:true}, function(err, result) {
-
-            if (err) {
-                res.send({'error':'An error has occurred'});
-            } else {
-                console.log('Success: ' + JSON.stringify(result[0]));
-                res.send(result[0]);
-
-                // send new user email
-                res.render('NewUserEmailTemplate.html', {title: 'tangle', name: user.name }, function(err, html){
-                    if(err) {
-                        // need to send to techops
-                        console.log("Error sending new user email: " + err);
-                    } else {
-                        mailClient.sendNewUserEmail(user, html);
-                    }
-                });
-            }
-        });
-    });
-};
  
 exports.updateUser = function(req, res) {
 
@@ -469,90 +550,6 @@ exports.updateUser = function(req, res) {
 
                 res.send(user);
 
-            }
-        });
-    });
-};
-
-var addDateToUsers = function(user_ids, date) {
-
-    console.log('adding date to users: ' + JSON.stringify(date));
-
-    db.collection('users', function(err, userCollection) {
-
-        userCollection.update({ _id : { $in : user_ids } },{ $addToSet: { dates: ObjectID(date._id.toString()) }},{ multi: true }, function(err, result){
-            
-            if(err){
-                console.log('Error adding date to user: ' + err);
-                mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
-            } else {
-
-                fs.readFile(__dirname + '/public/templates/NewDateProposalEmailTemplate.html', 'utf-8', function(err, html) {
-                    if(!err) {
-                        mailClient.sendDateProposalEmail(date, html);
-                    } else {
-                        console.log(err);
-                        mailClient.sendErrorEmail(USERS_ADD_DATE_ERROR_MSG + ': ' + err);
-                    }
-                });
-            }
-        });
-    });
-}
-
-exports.deleteUser = function(req, res) {
-
-    var id = req.params.id;
-
-    console.log('Deleting user: ' + id);
-
-    db.collection('users', function(err, collection) {
-
-        collection.remove({'_id': id}, {safe:true}, function(err, result) {
-
-            if (err) {
-                res.send({'error':'An error has occurred - ' + err});
-
-            } else {
-                console.log('' + result + ' user deleted');
-
-                res.send(req.body);
-
-            }
-        });
-    });
-};
-
-exports.addTransaction = function(date_id, approval_id, timestamp, amount){
-
-    var transaction = {
-        date_id: date_id,
-        paypal_approval_id: approval_id,
-        paypal_timestamp: timestamp, 
-        is_approved: false,
-        amount: parseFloat(amount)
-    };
-
-    db.collection('transactions', function(err, collection) {
-
-        collection.insert(transaction, {safe:true}, function(err, result) {
-
-            if (err) {
-                // should send email w details
-                console.log({'error':'An error has occurred adding a transaction for: ' + JSON.stringify(transaction)});
-            } else {
-                console.log('Success: ' + JSON.stringify(result[0]));
-
-                db.collection('dates', function(err, datesCollection){
-
-                    datesCollection.update({_id: ObjectID(date_id) }, { $set: { approval_transaction_id: result[0]._id }}, function(err, dateResult){
-                        if(err){
-                            console.log('error updating date transaction field: ' + err);
-                        } else {
-                            console.log(dateResult);
-                        }
-                    });
-                });
             }
         });
     });
