@@ -104,6 +104,11 @@
     <div class="ten columns">
       <div class="date-container add-bottom">
         <form data-bind="submit: addProposal">
+          <div data-bind="foreach: participants">
+            <div data-bind="ifnot: is_registered">
+              <span class="required-field" data-bind="text: '* OOPS... ' + name + ' is not a tangle user. We will need an email to propose this date'"></span><input class="lg-input" type="email" data-bind="value: email" placeholder="email" />
+            </div>
+          </div>
           <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
           <!--<input class="lg-input date-picker" type="date" data-bind="value: time" />-->
           <input class="lg-input date-picker" type="text" id="datepicker" data-bind="value: time" />
@@ -119,7 +124,7 @@
             <div class="payment-option" id="drink" data-bind="click: doPreapproval">$15</div>
             <div class="payment-option" id="meal" data-bind="click: doPreapproval">$30</div>
           </div>-->
-          <button id="submit-proposal" class="std-btn orange" type="submit">Submit</button>
+          <button id="submit-proposal" data-bind="enable: canSubmitProposal" class="std-btn orange" type="submit">Submit</button>
         </form>
       </div>
     </div>

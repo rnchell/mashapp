@@ -8,7 +8,7 @@ var UserViewModel = function(user){
   self.photo_normal = user.photo_normal;
   self.photo_large = user.photo_large;
   self.isUserLoggedIn = true;
-  
+
   self.toggleStatus = function () {
   	if (self.status() === "single") {
       self.status("taken");
@@ -21,7 +21,7 @@ var UserViewModel = function(user){
 
     self.user.status = self.status();
 
-    $.post('/user/update/', user, function(data){
+    $.post('/user/update/', self.user, function(data){
       //console.log(data)
   	});
   };
