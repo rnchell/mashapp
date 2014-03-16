@@ -22,6 +22,8 @@ var friendsViewModel = function(){
           return 0;
         });
 
+        console.log(self.dateHolder);
+        
         var proposalUI = new DateViewModel(self.dateHolder, moment().format("ddd, MMM D"), null, null, userViewModel.user, 0, 'Proposed');
         viewModel.selectedView({ templateName: "proposalTemplate", data: proposalUI});
         $( "#datepicker" ).datepicker({ dateFormat: "D, MM d"});

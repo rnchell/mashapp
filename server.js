@@ -9,7 +9,7 @@ var express = require("express"),
 
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
-    if (this[i] == deleteValue) {         
+    if (this[i] == deleteValue) {
       this.splice(i, 1);
       i--;
     }
@@ -19,7 +19,7 @@ Array.prototype.clean = function(deleteValue) {
 
 app.configure(function () {
 	app.use(express.methodOverride());
-	app.use(express.bodyParser());
+	//app.use(express.bodyParser());
 	app.use(express.json());
 	app.use(express.urlencoded());
 	app.use(express.static(__dirname + '/public'));

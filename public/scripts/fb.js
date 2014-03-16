@@ -28,7 +28,7 @@
           }
       }
       return "";
-  }    
+  }
 
   if(getCookie('mash_user')){
     viewModel.isUserLoggedIn(true);
@@ -39,8 +39,8 @@ $(function(){
 
   window.fbAsyncInit = function() {
     FB.init({
-      appId      : '1467905353425793',
-      //appId      : '232433826959882',
+      //appId      : '1467905353425793',
+      appId      : '232433826959882',
       status     : true, // check login status
       cookie     : true, // enable cookies to allow the server to access the session
       xfbml      : true  // parse XFBML
@@ -82,18 +82,18 @@ $(function(){
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       if (response.status === 'connected') {
-        console.log('auth.authResponseChange: connected');
+        //console.log('auth.authResponseChange: connected');
         viewModel.isUserLoggedIn(true);
         viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
         getUser(response.authResponse.userID);
       } else if (response.status === 'not_authorized') {
-        console.log('NOT AUTHORIZED');
+        //console.log('NOT AUTHORIZED');
         deleteCookie('mash_user');
         FB.login(function(response) {
 
         });
       } else {
-        console.log('LAST ELSE');
+        //console.log('LAST ELSE');
         deleteCookie('mash_user');
         FB.login(function(response) {
         });
@@ -113,22 +113,22 @@ $(function(){
   function getUser(user_id) {
 
     $.get('/user/' + user_id, function(data){
-      
+
       userObj = data;
 
-      if(userObj._id){
+      if(userObj._id && (!userObj.hasOwnProperty('is_registered') || userObj.is_registered === true)){
         userViewModel = new UserViewModel(userObj);
-        viewModel.isUserModelCreated(true);  
+        viewModel.isUserModelCreated(true);
 
         getFriendsList();
 
       } else {
         FB.api('/me?fields=picture.type(square),name, email', function(response) {
 
-          $.post('/user/add/', 
-            { 
-              _id: response.id, 
-              name: response.name, 
+          $.post('/user/add/',
+            {
+              _id: response.id,
+              name: response.name,
               email: response.email,
               photo_small: response.picture.data.url,
               photo_normal: response.picture.data.url.replace('_q.jpg', '_s.jpg'),
@@ -136,10 +136,10 @@ $(function(){
             },
             function(data){
               user = data;
-              
+
               userViewModel = new UserViewModel(user);
               viewModel.isUserModelCreated(true);
-              
+
               getFriendsList();
             }
           );
@@ -150,21 +150,43 @@ $(function(){
   }
 
   function getFriendsList(){
-    FB.api('/me/friends', function(result) {
+    FB.api('/me/friends?fields=name,picture.type(square)', function(result) {
 
       var friend_list = result.data;
 
       var ids = _.map(friend_list, function(f){ return f.id; });
+      var friendHash = {};
+
+      _.each(friend_list, function(f) { friendHash[f.id] = f; });
 
       $.post('/friends/', {ids: ids}, function(data){
         if(data){
           var friends = [];
 
+          // add existing users
           for(var i=0; i < data.length; i++){
             var u = data[i];
+            u.is_registered = true; // needs to be added to model
             u.photo_large = u.photo_large;
             u.status = u.status;
             friends.push(u);
+            delete friendHash[u._id];
+          }
+
+          // add unregistered users
+          for(var key in friendHash){
+
+              var ur = friendHash[key];
+              var f = {};
+              f._id = ur.id; // set to 0 for sorting later
+              f.is_registered = false; // needs to be added to model
+              f.status = 'single'; // add style for people who arent users of site
+              f.name = ur.name;
+              f.email = '';
+              f.photo_small = ur.picture.data.url;
+              f.photo_normal = ur.picture.data.url.replace('_q.jpg', '_s.jpg');
+              f.photo_large = ur.picture.data.url.replace('_q.jpg', '_n.jpg').replace('/t5/', '/t1/p200x200/');
+              friends.push(f);
           }
 
           friendsViewModel = new friendsViewModel();

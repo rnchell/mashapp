@@ -472,6 +472,10 @@ input {
 	background-color: #84CBBC;
 }
 
+.required-field {
+	color: #FF0000;
+}
+
 /* #Media Queries
 ================================================== */
 
