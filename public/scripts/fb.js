@@ -34,6 +34,18 @@
     viewModel.isUserLoggedIn(true);
   }
 
+(function() {
+  Array.prototype.clean = function(deleteValue) {
+  for (var i = 0; i < this.length; i++) {
+    if (this[i] == deleteValue) {
+      this.splice(i, 1);
+      i--;
+    }
+  }
+  return this;
+};
+})();
+
 $(function(){
   var friend_ids = [];
 
@@ -152,6 +164,8 @@ $(function(){
   function getFriendsList(){
     FB.api('/me/friends?fields=name,picture.type(square)', function(result) {
 
+      console.log(result);
+
       var friend_list = result.data;
 
       var ids = _.map(friend_list, function(f){ return f.id; });
@@ -184,8 +198,22 @@ $(function(){
               f.name = ur.name;
               f.email = '';
               f.photo_small = ur.picture.data.url;
-              f.photo_normal = ur.picture.data.url.replace('_q.jpg', '_s.jpg');
-              f.photo_large = ur.picture.data.url.replace('_q.jpg', '_n.jpg').replace('/t5/', '/t1/p200x200/');
+
+              /* 
+                templates
+                https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c46.7.87.87/s50x50/1003858_10100271913300499_272422298_a.jpg
+                https://scontent-b.xx.fbcdn.net/hprofile-ash2/l/t1/p200x200/1896764_10102330622695293_1627545483_n.jpg
+              */
+
+              var url = $('<a>', { href:ur.picture.data.url } )[0];
+              var paths = url.pathname.split('/').clean("");
+              var filename = paths[paths.length-1];
+              
+              f.photo_large = url.protocol + url.hostname + '/' + 
+                paths[0] + '/t1/p200x200/' + filename.replace(/\_[qtan]/g, '_n');
+
+              f.photo_normal = f.photo_large;//ur.picture.data.url.replace(/\_[qtan]/g, '_s');
+              
               friends.push(f);
           }
 
