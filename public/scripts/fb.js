@@ -199,18 +199,12 @@ $(function(){
               f.email = '';
               f.photo_small = ur.picture.data.url;
 
-              /* 
-                templates
-                https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/t1.0-1/c46.7.87.87/s50x50/1003858_10100271913300499_272422298_a.jpg
-                https://scontent-b.xx.fbcdn.net/hprofile-ash2/l/t1/p200x200/1896764_10102330622695293_1627545483_n.jpg
-              */
-
               var url = $('<a>', { href:ur.picture.data.url } )[0];
               var paths = url.pathname.split('/').clean("");
               var filename = paths[paths.length-1];
               
               f.photo_large = url.protocol + url.hostname + '/' + 
-                paths[0] + '/t1/p200x200/' + filename.replace(/\_[qtan]/g, '_n');
+                paths[0] + '/t1/p200x200/' + filename.replace(/\_[qtas]/g, '_n');
 
               f.photo_normal = f.photo_large;//ur.picture.data.url.replace(/\_[qtan]/g, '_s');
               
