@@ -3,54 +3,96 @@
 {% block scripts %}
 {% parent %}
 <script type="text/javascript">
-	$(function() {
+	
+	var friends = [];
 
+	function getUser(){
 		$.get('/user', function (user) {
       userViewModel = new UserViewModel(user);
 	    viewModel.isUserModelCreated(true);
     	viewModel.isUserLoggedIn(true);
+
+    	getFriends();
     });
+	}
 
-		// TODO: cache friends?
-		$.get('/user/friends', function(data){
+	function getFriends(){
+		// TODO: cache?
+		$.get('/facebook/user/friends', function(data){
 
-			var friendsJSON = JSON.parse(data);
-			var friendsData = friendsJSON.data;
-			var friends = [];
+			var friendsData = data;
+			
+			friends = [];
 
-			var ids = _.map(friendsData, function(f){ return f.uid; });
-      var friendHash = {};
-
-      _.each(friendsData, function(f) { friendHash[f.uid] = f; });
+			var existingUserIds = [];
 
 			for(var key in friendsData){
+				var friend = friendsData[key];
 
-				var ur = friendsData[key];
+				if(friend.hasOwnProperty('is_app_user') && friend.is_app_user){
+					// TODO: user should exist in our db, but its possible they dont so have to handle that
+					existingUserIds.push(friend.uid);
+				} else {
+					var f = {};
 
-				var f = {};
-        f._id = ur.uid; // set to 0 for sorting later
-        f.is_registered = false; // needs to be added to model
-        f.status = 'single'; // add style for people who arent users of site
-        f.name = ur.name;
-        f.email = '';
-        f.photo_small = ur.pic_square;
-        f.photo_normal = ur.pic_square;
-        f.photo_large = ur.pic_big;
+					f._id = friend.uid; // set to 0 for sorting later
+	        f.is_registered = false; // needs to be added to model
+	        f.status = 'single'; // add style for people who arent users of site
+	        f.name = friend.name;
+	        f.email = '';
+	        f.photo_small = friend.pic_square;
+	        f.photo_normal = friend.pic_square;
+	        f.photo_large = friend.pic_big;
 
-        friends.push(f);
+	        friends.push(f);
+				}
 			}
 
-			friendsViewModel = new friendsViewModel();
-      friendsViewModel.users = ko.observableArray(friends);
-      viewModel.selectedView({templateName: "friendsTemplate", data: friendsViewModel});
-
-      $('#loader').hide();
+			if(existingUserIds.length > 0) {
+				getExistingUsers(existingUserIds);
+			} else {
+				displayFriends();
+			}
 		});
+	}
+
+	function getExistingUsers(ids){
+
+		$.post('/users', {ids: ids}, function(data){
+      if(data){
+
+      	// TODO: check if expected users were returned, otherwise add as if they were unregistered
+
+        // add existing users
+        for(var i=0; i < data.length; i++){
+          var u = data[i];
+          u.is_registered = true; // needs to be added to model
+          u.photo_large = u.photo_large;
+          u.status = u.status;
+          friends.push(u);
+        }
+
+        displayFriends();
+      }
+    });
+	}
+
+	function displayFriends(){
+		$('#loader').hide();
+		friendsViewModel = new friendsViewModel();
+    friendsViewModel.users = ko.observableArray(friends);
+    viewModel.selectedView({templateName: "friendsTemplate", data: friendsViewModel});
+	}
+
+	$(function() {
+		getUser();
 	});
 </script>
 {% endblock %}
 {% block content %}
-<img id="loader" src="/img/loader-lg.gif" />
+<div id="loader" class="loader">
+	<img id="loader" src="/img/loader-lg.gif" />
+</div>
 <script id="accountTemplate" type="text/html">
     <div class="header sixteen columns double-bottom">
       <div id="logo" data-bind="click: $root.goToHomeView">tangle</div>

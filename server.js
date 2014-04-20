@@ -65,19 +65,6 @@ app.configure( function () {
 app.set('view cache', false);
 swig.setDefaults({ cache: false });
 
-// app.configure(function () {
-// 	app.use(express.methodOverride())
-// 		.use(express.bodyParser())
-// 		.use(express.cookieParser('myvoiceismypassport'))
-// 		.use(express.session())
-// 		.use(express.json())
-// 		.use(express.urlencoded())
-// 		.use(express.static(__dirname + '/public'))
-// 		.use(everyauth.middleware(app))
-// 		.set('views', __dirname + '/public/templates')
-// 		.engine('html', engines.ejs);
-// });
-
 // var paypal = require('./paypal');
 
 // app.get('/paypal/pay/', paypal.payRequest);
@@ -90,12 +77,14 @@ swig.setDefaults({ cache: false });
 
 app.get('/', function(req,res){
 
-	if(req.user){
+	if(req.loggedIn){
 		console.log('LOGGED IN');
+		
 		res.render('indexView.html');
 	} else {
 		console.log('user not logged in');
-		res.render('loginView.html', {locals: {clearSession: true}});
+		
+		res.render('loginView.html');
 	}
 });
 
@@ -108,25 +97,27 @@ app.get('/user', function(req,res){
 	}
 });
 
-app.get('/user/friends', function(req,res){
+app.get('/facebook/user/friends', function(req,res){
 
 	var oauth = everyauth.facebook.oauth;
 		
 		var fqlUrl = "https://graph.facebook.com/fql?" + 
-		"q=SELECT+uid,name,pic,pic_big,pic_square+FROM+user+WHERE+uid+IN(SELECT+uid2+FROM+friend+WHERE+uid1=me())";//"https://graph.facebook.com/fql?q=SELECT+uid2+photo+FROM+friend+WHERE+uid1=me()";
+		"q=SELECT+uid,name,pic,pic_big,pic_square,is_app_user+FROM+user+WHERE+uid+IN(SELECT+uid2+FROM+friend+WHERE+uid1=me())";//"https://graph.facebook.com/fql?q=SELECT+uid2+photo+FROM+friend+WHERE+uid1=me()";
 
 		oauth.get(fqlUrl, req.session.auth.facebook.accessToken, function (err, data) {
 
 			if(!err){
 
-				// TODO: find existing friends first
+				var friends = JSON.parse(data).data;
 
-				res.send(data);
+				res.send(friends);
 			} else {
 				console.log(err);
 			}
 		});
 });
+
+app.post('/users', mongoClient.getUsers);
 
 app.get('/user/:id', mongoClient.getById);
 

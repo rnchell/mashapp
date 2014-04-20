@@ -462,6 +462,42 @@ exports.getFriends = function(req, res){
     });
 }
 
+exports.getUsers = function(req, res){
+
+    var ids = req.body.ids;
+
+    db.collection('users', function(err, collection){
+
+        if(!err){
+
+            collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
+
+                if(!err){
+                    res.send(items.clean(null));
+                } else {
+                    console.log('Error getting users: ' + err);
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                }
+
+            });
+
+        } else {
+
+            mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + err);
+
+            res.send(500);
+        }
+    });
+}
+
 exports.rejectProposedDate = function(req, res){
 
     console.log('Rejecting proposed date');
