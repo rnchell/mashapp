@@ -671,3 +671,60 @@ exports.updateUser = function(req, res) {
         });
     });
 }
+
+exports.getUserById = function(userId, promise){
+
+    db.collection('users', function(err, collection) {
+
+        if(err){
+
+            mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+            promise.fail(err);
+            return;
+            //res.send(500);
+        } else {
+            collection.findOne({'_id': userId}, function(err, item) {
+
+                if(err) {
+
+                    mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+                    //res.send(500);
+                    promise.fail(err);
+                    return;
+                } else {
+                    //res.send(item);
+                    promise.fulfill(item);
+                }
+            });
+        }
+    });
+}
+
+exports.findUserById = function(userId, callback){
+
+    db.collection('users', function(err, collection) {
+
+        if(err){
+
+            mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+            callback(err);
+        } else {
+            collection.findOne({'_id': userId}, function(err, item) {
+
+                if(err) {
+
+                    mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+                    callback(err);
+                } else {
+                    //res.send(item);
+                    console.log(item);
+                    callback(null, item);
+                }
+            });
+        }
+    });
+}

@@ -30,9 +30,9 @@
       return "";
   }
 
-  if(getCookie('mash_user')){
-    viewModel.isUserLoggedIn(true);
-  }
+  // if(getCookie('mash_user')){
+  //   viewModel.isUserLoggedIn(true);
+  // }
 
 (function() {
   Array.prototype.clean = function(deleteValue) {
@@ -61,7 +61,7 @@ $(function(){
     function loadFBDialog() {
       FB.login(function(response) {
         if (response.authResponse) {
-          createCookie('mash_user', response.authResponse.accessToken, 1);
+          //createCookie('mash_user', response.authResponse.accessToken, 1);
           // FB.api('/me', function(response) {
           //   console.log('Good to see you, ' + response.name + '.');
           // });
@@ -75,38 +75,43 @@ $(function(){
       loadFBDialog();
     });
 
-    FB.getLoginStatus(function(response){
-      if(response.status === 'connected'){
-        //createCookie('mash_user', response.authResponse.accessToken, 1);
-        //console.log('getLoginStatus: connected');
-      } else if (response.status === 'not_authorized'){
-        //console.log('getLoginStatus: not-authorized');
-        //console.log('REMOVING COOKIE');
-        deleteCookie('mash_user');
-        viewModel.isUserLoggedIn(false);
-      } else {
-        //console.log('getLoginStatus: not logged in');
-        //console.log('REMOVING COOKIE');
-        deleteCookie('mash_user');
-        viewModel.isUserLoggedIn(false);
-      }
-    });
+    // FB.getLoginStatus(function(response){
+    //   if(response.status === 'connected'){
+    //     console.log('status: connected');
+    //     //createCookie('mash_user', response.authResponse.accessToken, 1);
+    //     viewModel.isUserLoggedIn(true);
+
+    //     userViewModel = new UserViewModel("{% everyauth.user %}");
+
+    //     viewModel.isUserModelCreated(true);
+    //     viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
+    //     getFriendsList();
+    //   } else if (response.status === 'not_authorized'){
+    //     //console.log('getLoginStatus: not-authorized');
+    //     //console.log('REMOVING COOKIE');
+    //     deleteCookie('mash_user');
+    //     viewModel.isUserLoggedIn(false);
+    //   } else {
+    //     //console.log('getLoginStatus: not logged in');
+    //     //console.log('REMOVING COOKIE');
+    //     deleteCookie('mash_user');
+    //     viewModel.isUserLoggedIn(false);
+    //   }
+    // });
 
     FB.Event.subscribe('auth.authResponseChange', function(response) {
       if (response.status === 'connected') {
-        //console.log('auth.authResponseChange: connected');
+        console.log('auth.authResponseChange: connected');
+
         viewModel.isUserLoggedIn(true);
         viewModel.selectedView(new View("friendsTemplate", new friendsViewModel()));
+        console.log(response.authResponse);
         getUser(response.authResponse.userID);
       } else if (response.status === 'not_authorized') {
-        //console.log('NOT AUTHORIZED');
-        deleteCookie('mash_user');
         FB.login(function(response) {
 
         });
       } else {
-        //console.log('LAST ELSE');
-        deleteCookie('mash_user');
         FB.login(function(response) {
         });
       }
@@ -118,7 +123,7 @@ $(function(){
    var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
    if (d.getElementById(id)) {return;}
    js = d.createElement('script'); js.id = id; js.async = true;
-   js.src = "http://connect.facebook.net/en_US/all.js";
+   js.src = "//connect.facebook.net/en_US/all.js";
    ref.parentNode.insertBefore(js, ref);
   }(document));
 
@@ -162,6 +167,8 @@ $(function(){
   }
 
   function getFriendsList(){
+    console.log('getting friends');
+
     FB.api('/me/friends?fields=name,picture.type(square)', function(result) {
 
       console.log(result);
