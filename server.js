@@ -101,10 +101,10 @@ app.get('/', function(req,res){
 
 app.get('/user', function(req,res){
 
-	if(req.user){
+	if(req.loggedIn){
 		res.send(req.user);
 	} else {
-		res.send(402);
+		res.send(401);
 	}
 });
 
@@ -118,6 +118,9 @@ app.get('/user/friends', function(req,res){
 		oauth.get(fqlUrl, req.session.auth.facebook.accessToken, function (err, data) {
 
 			if(!err){
+
+				// TODO: find existing friends first
+
 				res.send(data);
 			} else {
 				console.log(err);

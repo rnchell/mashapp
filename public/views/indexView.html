@@ -18,6 +18,11 @@
 			var friendsData = friendsJSON.data;
 			var friends = [];
 
+			var ids = _.map(friendsData, function(f){ return f.uid; });
+      var friendHash = {};
+
+      _.each(friendsData, function(f) { friendHash[f.uid] = f; });
+
 			for(var key in friendsData){
 
 				var ur = friendsData[key];
