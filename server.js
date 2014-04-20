@@ -2,35 +2,30 @@ require('newrelic');
 
 var everyauth = require('everyauth');
 
-everyauth.debug = true;
-
 var express = require("express"),
 	fs = require('fs'),
 	app = express(),
 	port = parseInt(process.env.PORT, 10) || 5000,
 	mongoClient = require('./mongoClient'),
-	swig = require('swig')
+	swig = require('swig'),
+	utility = require('./utility'),
+	config = require('./config').config
 
-Array.prototype.clean = function(deleteValue) {
-  for (var i = 0; i < this.length; i++) {
-    if (this[i] == deleteValue) {
-      this.splice(i, 1);
-      i--;
-    }
-  }
-  return this;
-};
+// remove for prod
+app.set('view cache', false);
+swig.setDefaults({ cache: false });
 
 everyauth.everymodule.findUserById( function (userId, callback) {
   mongoClient.findUserById(userId, callback);
 });
 
 everyauth.everymodule.userPkey('_id');
+//everyauth.debug = true;
 
 everyauth
   .facebook
-    .appId('232433826959882')
-    .appSecret('18f9fec6b23ccc1f671fe1940db72357')
+    .appId(config.FACEBOOK_APP_ID)
+    .appSecret(config.FACEBOOK_APP_SECRET)
     .handleAuthCallbackError( function (req, res) {
 
 	  })
@@ -47,6 +42,7 @@ everyauth
 everyauth.facebook
   .scope('email');
 
+// has to be below everyauth configuration
 app.use(express.static(__dirname + '/public'))
   .use(express.favicon())
   .use(express.methodOverride())
@@ -60,11 +56,6 @@ app.configure( function () {
   app.set('views', __dirname + '/public/views');
   app.engine('html', swig.renderFile);
 });
-
-// remove for prod
-app.set('view cache', false);
-swig.setDefaults({ cache: false });
-
 // var paypal = require('./paypal');
 
 // app.get('/paypal/pay/', paypal.payRequest);
@@ -76,6 +67,9 @@ swig.setDefaults({ cache: false });
 // app.get('/paypal/cancel/', paypal.cancelPreapproval);
 
 app.get('/', function(req,res){
+
+	console.log(config.FACEBOOK_APP_ID);
+	console.log(config.FACEBOOK_APP_SECRET);
 
 	if(req.loggedIn){
 		console.log('LOGGED IN');

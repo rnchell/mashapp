@@ -718,7 +718,6 @@ exports.getUserById = function(userId, promise){
 
             promise.fail(err);
             return;
-            //res.send(500);
         } else {
             collection.findOne({'_id': userId}, function(err, item) {
 
@@ -726,11 +725,9 @@ exports.getUserById = function(userId, promise){
 
                     mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
 
-                    //res.send(500);
                     promise.fail(err);
                     return;
                 } else {
-                    //res.send(item);
                     promise.fulfill(item);
                 }
             });
@@ -756,8 +753,6 @@ exports.findUserById = function(userId, callback){
 
                     callback(err);
                 } else {
-                    //res.send(item);
-                    console.log(item);
                     callback(null, item);
                 }
             });
