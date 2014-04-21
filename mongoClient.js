@@ -462,6 +462,42 @@ exports.getFriends = function(req, res){
     });
 }
 
+exports.getUsers = function(req, res){
+
+    var ids = req.body.ids;
+
+    db.collection('users', function(err, collection){
+
+        if(!err){
+
+            collection.find({ _id : { $in : ids } }).sort({ name: 1 }).toArray(function(err, items){
+
+                if(!err){
+                    res.send(items.clean(null));
+                } else {
+                    console.log('Error getting users: ' + err);
+                    var errorDetails = {
+                        request: req,
+                        response: res,
+                        error: err
+                    };
+
+                    mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + JSON.stringify(errorDetails));
+
+                    res.send(500);
+                }
+
+            });
+
+        } else {
+
+            mailClient.sendErrorEmail(USERS_GET_FRIENDS_ERROR_MSG + ': ' + err);
+
+            res.send(500);
+        }
+    });
+}
+
 exports.rejectProposedDate = function(req, res){
 
     console.log('Rejecting proposed date');
@@ -669,5 +705,57 @@ exports.updateUser = function(req, res) {
 
             }
         });
+    });
+}
+
+exports.getUserById = function(userId, promise){
+
+    db.collection('users', function(err, collection) {
+
+        if(err){
+
+            mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+            promise.fail(err);
+            return;
+        } else {
+            collection.findOne({'_id': userId}, function(err, item) {
+
+                if(err) {
+
+                    mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+                    promise.fail(err);
+                    return;
+                } else {
+                    promise.fulfill(item);
+                }
+            });
+        }
+    });
+}
+
+exports.findUserById = function(userId, callback){
+
+    db.collection('users', function(err, collection) {
+
+        if(err){
+
+            mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+            callback(err);
+        } else {
+            collection.findOne({'_id': userId}, function(err, item) {
+
+                if(err) {
+
+                    mailClient.sendErrorEmail(USERS_GET_BY_ID_ERROR_MSG + ': ' + err);
+
+                    callback(err);
+                } else {
+                    callback(null, item);
+                }
+            });
+        }
     });
 }

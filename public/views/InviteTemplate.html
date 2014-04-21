@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=320">
+  <style type="text/css">
+    #background-table { background-color: #dedede; }
+    #headline p { color: #00A8B2; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif; font-size: 36px; text-align: center; margin-top:0px; margin-bottom:30px; }
+    #headline p a { color: #00A8B2; text-decoration: none; }
+    table[class=w640], td[class=w640], img[class=w640] { width:300px !important; }
+  </style>
+</head>
+<body>
+
+  <table id="background-table">
+      <tbody>
+        <tr>
+          <td align="center">
+            <table class="w640" width="640" cellpadding="0" cellspacing="0" border="0">
+              <tbody>
+                <tr>
+                  <td class="w30" width="30"></td>
+                  <td class="w580" width="580" height="30"></td>
+                  <td class="w30" width="30"></td>
+                </tr>
+                <tr>
+                  <td class="w30" width="30"></td>
+                  <td class="w580" width="580">
+                      <div align="center" id="headline">
+                          <p style="color: #00A8B2; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif; font-size: 36px; text-align: center; margin-top:0px; margin-bottom:25px;">
+                              <strong>
+                                <a style="color: #00A8B2" href="http://www.trytangle.com">
+                                  <singleline label="Title"><%= title %></singleline>
+                                </a>
+                              </strong>
+                              <div style="font-size: 2.0em;font-weight: 300;margin-bottom: 10px;">The Invitation.</div>
+                          </p>
+                      </div>
+                  </td>
+                  <td class="w30" width="30"></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+  </table>
+  <table class="w640" width="640" cellpadding="0" cellspacing="0" border="0">
+    <tbody>
+      <tr>
+        <td>
+          <table class="w640" width="640" cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+              <tr>
+                <td class="w30" width="30"></td>
+                <td class="w580" width="580" height="30"></td>
+                <td class="w30" width="30"></td>
+              </tr>
+              <tr>
+                <td class="w30" width="30"></td>
+                <td class="w580" width="580">
+                    <div align="center">
+                        <div style="font-size: 1.2em;font-weight: 300;border-bottom: 1px solid #DDD;text-align: center;height: 50px;line-height:30px;padding-bottom:50px">
+                          Hi <%= user.name %>,
+                          <br><br>
+                          <%= sender.name %> has invited you join the best new site around: <a href="http://www.trytangle.com">tangle</a>. With tangle, you can finally set up those two friends that would go so well together! Head on over and get started matching up your friends.
+                        </div>
+                    </div>
+                </td>
+                <td class="w30" width="30"></td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      <tr>
+          <td>
+            <div id="footer" class="clearfix">
+              <div id="copyright">
+                Made with love by Ben + Buddy
+              </div>
+            </div>
+          </td>
+      </tr>
+    </tbody>
+  </table>
+
+ 
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+  <script id="datesTemplate" type="text/html">
+    <div class="sixteen columns add-bottom">
+      <div class="instruction">Lucky you.</div>
+    </div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
+      <div data-bind="foreach: datesHolder">
+        <div class="date-container add-bottom">
+          <div class="add-bottom">
+            <span data-bind="text: matchmaker.name"></span><span> has a date proposal for you:</span>
+          </div>
+          <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
+            <div class="user-image add-bottom" data-bind="click: $parent.match, css: status">
+              <img data-bind="attr: {src: photo_large}" />
+            </div>
+            <div class="date date-detail" data-bind="text: name"></div>
+          </div>
+          <div class="location date-detail" data-bind="text: location"></div>
+          <div class="date-time date-detail add-bottom" data-bind="text: time"></div>
+          <div class="add-bottom" data-bind="text: message"></div>
+          <div class="clearfix">
+            <button id="accept-proposal" class="std-btn orange" data-bind="click: $parent.acceptProposal">Accept</button>
+            <button id="reject-proposal" class="std-btn" data-bind="click: $parent.rejectProposal">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="three columns"></div>
+  </script>
+{% endblock %}

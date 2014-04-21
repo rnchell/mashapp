@@ -70,3 +70,5 @@ var UserViewModel = function(user){
     });
   }
 };
+
+//var userViewModel = new UserViewModel();

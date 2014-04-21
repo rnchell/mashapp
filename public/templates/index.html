@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+<% if (everyauth.loggedIn) { %>
+<%= everyauth.facebook.accessToken %>
+<%= everyauth.user.dates.length %>
+<% } else { %>
+<h2>Not Authorized</h2>
+<a href='/auth/facebook'>Login</a>
+<% } %>
+
+
+

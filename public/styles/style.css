@@ -476,12 +476,21 @@ input {
 	color: #FF0000;
 }
 
+.loader {
+	margin-left:500px;
+	margin-top: 150px;
+}
+
 /* #Media Queries
 ================================================== */
 
 /* Smaller than standard 960 (devices and browsers) */
 @media only screen and (max-width: 959px) {
 	
+	.loader {
+		margin-left: 100px;
+	}
+
 	#home-container {
 		margin-top: 80px;
 	}
@@ -499,6 +508,10 @@ input {
 		height: 132px;
 		width: 132px;
 	}
+
+	.loader {
+		margin-left: 400px;
+	}
 }
 
 /* All Mobile Sizes (devices and browser) */
@@ -512,6 +525,10 @@ input {
 	.user-image-container {
 		height: 132px;
 		width: 132px;
+	}
+
+	.loader {
+		margin-left: 150px;
 	}
 }
 
@@ -536,7 +553,10 @@ input {
       white-space: nowrap;
       overflow: hidden;
 	}
-
+	
+	.loader {
+		margin-left: 300px;
+	}
 }
 
 /* Mobile Portrait Size to Mobile Landscape Size (devices and browsers) */
@@ -559,6 +579,9 @@ input {
 	    text-indent: 100%;
 	    white-space: nowrap;
 	    overflow: hidden;
+	}
+	.loader {
+		margin-left: 180px;
 	}
 }
 

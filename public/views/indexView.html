@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+{% parent %}
+<script type="text/javascript">
+	
+	var friends = [];
+
+	function getUser(){
+		$.get('/user', function (user) {
+      userViewModel = new UserViewModel(user);
+	    viewModel.isUserModelCreated(true);
+    	viewModel.isUserLoggedIn(true);
+
+    	getFriends();
+    });
+	}
+
+	function getFriends(){
+		// TODO: cache?
+		$.get('/facebook/user/friends', function(data){
+
+			var friendsData = data;
+			
+			friends = [];
+
+			var existingUserIds = [];
+
+			for(var key in friendsData){
+				var friend = friendsData[key];
+
+				if(friend.hasOwnProperty('is_app_user') && friend.is_app_user){
+					// TODO: user should exist in our db, but its possible they dont so have to handle that
+					existingUserIds.push(friend.uid);
+				} else {
+					var f = {};
+
+					f._id = friend.uid; // set to 0 for sorting later
+	        f.is_registered = false; // needs to be added to model
+	        f.status = 'single'; // add style for people who arent users of site
+	        f.name = friend.name;
+	        f.email = '';
+	        f.photo_small = friend.pic_square;
+	        f.photo_normal = friend.pic_square;
+	        f.photo_large = friend.pic_big;
+
+	        friends.push(f);
+				}
+			}
+
+			if(existingUserIds.length > 0) {
+				getExistingUsers(existingUserIds);
+			} else {
+				displayFriends();
+			}
+		});
+	}
+
+	function getExistingUsers(ids){
+
+		$.post('/users', {ids: ids}, function(data){
+      if(data){
+
+      	// TODO: check if expected users were returned, otherwise add as if they were unregistered
+
+        // add existing users
+        for(var i=0; i < data.length; i++){
+          var u = data[i];
+          u.is_registered = true; // needs to be added to model
+          u.photo_large = u.photo_large;
+          u.status = u.status;
+          friends.push(u);
+        }
+
+        displayFriends();
+      }
+    });
+	}
+
+	function displayFriends(){
+		$('#loader').hide();
+		friendsViewModel = new friendsViewModel();
+    friendsViewModel.users = ko.observableArray(friends);
+    viewModel.selectedView({templateName: "friendsTemplate", data: friendsViewModel});
+	}
+
+	$(function() {
+		getUser();
+	});
+</script>
+{% endblock %}
+{% block content %}
+<div id="loader" class="loader">
+	<img id="loader" src="/img/loader-lg.gif" />
+</div>
+<script id="accountTemplate" type="text/html">
+    <div class="header sixteen columns double-bottom">
+      <div id="logo" data-bind="click: $root.goToHomeView">tangle</div>
+      <div id="account" class="cta lg-cta" data-bind="click: $root.goToDatesView">
+        <img data-bind="attr: {src: photo_small}" />
+      </div>
+      <div id="status" data-bind="css: status">
+        <div id="status-text" data-bind="css: status"><span class="status-text" data-bind="text: status"></span></div>
+        <div id="status-button" data-bind="click: toggleStatus, css: status"></div>
+        <div id="alert" class="cta sm-cta" data-bind="visible: dates().length > 0, text: dates().length, click: $root.goToDatesView"></div>
+      </div>
+    </div>
+  </script>
+<script id="friendsTemplate" type="text/html">
+    <div class="instruction sixteen columns add-bottom">Click two friends to propose a date</div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div data-bind="foreach: users">
+      <div class="user-container add-bottom four columns">
+        <div class="user-image-container" data-bind="click: $parent.match, css: status">
+          <img class="user-profile" data-bind="attr: {src: photo_large}" />
+        </div>
+        <div class="user-name" data-bind="text: name"></div>
+      </div>
+    </div>
+</script>
+  <script id="proposalTemplate" type="text/html">
+    <div class="instruction sixteen columns add-bottom" data-bind="foreach: participants">
+      <span data-bind="text: name" + " "></span>
+    </div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
+      <div class="date-container add-bottom">
+        <form data-bind="submit: addProposal">
+          <div data-bind="foreach: participants">
+            <div data-bind="ifnot: is_registered">
+              <span class="required-field" data-bind="text: '* OOPS... ' + name + ' is not a tangle user. We will need an email to propose this date'"></span><input class="lg-input" type="email" data-bind="value: email" placeholder="email" />
+            </div>
+          </div>
+          <input class="lg-input" type="text" data-bind="value: location" placeholder="Location: e.g. Joes Crab Shack" />
+          <!--<input class="lg-input date-picker" type="date" data-bind="value: time" />-->
+          <input class="lg-input date-picker" type="text" id="datepicker" data-bind="value: time" />
+          <div class="time">
+            <select id="time select" data-bind="value: hour">
+              <option>6am</option><option>7am</option><option>8am</option><option>9am</option><option>10am</option><option>11am</option><option>12pm</option><option>1pm</option><option>2pm</option><option>3pm</option><option>4pm</option><option>5pm</option><option>6pm</option><option>7pm</option><option>8pm</option><option>9pm</option><option>10pm</option><option>11pm</option>
+            </select>
+          </div>
+          <textarea id="message-area" data-bind="value: message"></textarea>
+          <!--<div class="clearfix">
+            <div class="payment-option selected-amount" id="free" data-bind="click: doPreapproval">$0</div>
+            <div class="payment-option" id="coffee" data-bind="click: doPreapproval">$5</div>
+            <div class="payment-option" id="drink" data-bind="click: doPreapproval">$15</div>
+            <div class="payment-option" id="meal" data-bind="click: doPreapproval">$30</div>
+          </div>-->
+          <button id="submit-proposal" data-bind="enable: canSubmitProposal" class="std-btn orange" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+    <div class="three columns"></div>
+    </script>
+  </script>
+
+  <script id="datesTemplate" type="text/html">
+    <div class="sixteen columns add-bottom">
+      <div class="instruction">Lucky you.</div>
+    </div>
+    <div class="sixteen columns line add-bottom"></div>
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
+      <div data-bind="foreach: datesHolder">
+        <div class="date-container add-bottom">
+          <div class="add-bottom">
+            <span data-bind="text: matchmaker.name"></span><span> has a date proposal for you:</span>
+          </div>
+          <div data-bind="with: $parent.getOtherParticipant($data, $parent.user._id)">
+            <div class="user-image add-bottom" data-bind="click: $parent.match, css: status">
+              <img data-bind="attr: {src: photo_large}" />
+            </div>
+            <div class="date date-detail" data-bind="text: name"></div>
+          </div>
+          <div class="location date-detail" data-bind="text: location"></div>
+          <div class="date-time date-detail add-bottom" data-bind="text: time"></div>
+          <div class="add-bottom" data-bind="text: message"></div>
+          <div class="clearfix">
+            <button id="accept-proposal" class="std-btn orange" data-bind="click: $parent.acceptProposal">Accept</button>
+            <button id="reject-proposal" class="std-btn" data-bind="click: $parent.rejectProposal">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="three columns"></div>
+  </script>
+{% endblock %}

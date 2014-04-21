@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<script id="loginTemplate" type="text/html">
+  <div id="home-container" class="clearfix">
+    <div class="ten columns">
+      <img id="home-image" src="img/friends.png">
+    </div>
+    <div class="six columns">
+      <div id="lg-logo" class="add-bottom">
+        tangle
+      </div>
+      <div id="slogan">Hook up your friends</div>
+      <div class="line"></div>
+      <button id="fb-button" onclick="window.location.href='/auth/facebook'">
+        Login with Facebook
+      </button>
+      <div id="disclaimer">
+        We will never post to your Facebook wall.</br>
+      </div>
+    </div>
+  </div>
+</script>
+{% endblock %}

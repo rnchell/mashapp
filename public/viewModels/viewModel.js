@@ -18,8 +18,6 @@ function ViewModel() {
     });
   };
   self.logout = function () {
-    FB.logout();
-    deleteCookie('mash_user');
   }
 };
 

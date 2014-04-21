@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>tangle - Hook up your friends</title>
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400' rel='stylesheet' type='text/css'>
+	{% block scripts %}
+	  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	  <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+	  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+	  <script src="/lib/underscore.js"></script>
+	  <script src="lib/knockout.js"></script>
+	  <script src="viewModels/viewModel.js"></script>
+	  <script src="scripts/map.js"></script>
+	  <script src="viewModels/dateViewModel.js"></script>
+	  <script src="viewModels/friendsViewModel.js"></script>
+	  <script src="viewModels/userViewModel.js"></script>
+	  <script type="text/javascript" src="lib/moment.js"></script>
+	  <link rel="stylesheet" type="text/css" href="/styles/grid.css">
+	  <link rel="stylesheet" type="text/css" href="/styles/style.css">
+		<script type="text/javascript">
+    	$(document).on('click', '.user-image-container', function(){
+      	$(this).toggleClass('selected');
+    	});
+  	</script>
+	{% endblock %}
+</head>
+<body>
+  <div id="container" class="container">
+		 {% if not everyauth.loggedIn %}
+      <div data-bind="template: { name: 'loginTemplate' }"></div>
+		{% else %}
+      <div data-bind="if: isUserModelCreated">
+        <div data-bind="with: userViewModel">
+            <div id="account-view" data-bind="template: { name: 'accountTemplate' }" class="clearfix"></div>
+          </div>
+        </div>
+      <div data-bind="with: selectedView">
+        <div data-bind="template: { name: templateName, data: data }"></div>
+      </div>
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          Made with love by Ben + Buddy
+        </div>
+        <a id="logout" href="/logout">Logout</a>
+      </div>
+    {% endif %}
+  </div>
+  {% block content %}
+  {% endblock %}
+</body>
+</html>
